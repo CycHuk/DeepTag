@@ -102,3 +102,6 @@ dmypy.json
 *.pid
 *.seed
 *.pid.lock
+
+node_modules/
+static/styles.css
