@@ -37,6 +37,20 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-decorator-include"
+version = "3.3"
+description = "Include Django URL patterns with decorators"
+optional = false
+python-versions = ">=3.6"
+groups = ["main"]
+files = [
+    {file = "django_decorator_include-3.3.tar.gz", hash = "sha256:336f73c403983a5d1bf4da5f19cd114db3a912b9bfc0e69ef1f20ce589828c3e"},
+]
+
+[package.dependencies]
+Django = ">=2.2"
+
+[[package]]
 name = "python-dotenv"
 version = "1.2.2"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -83,4 +97,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "21be3ad6edb9914f69e3fd4e11ba6302d365e8869943fd87d0ca614a792575ab"
+content-hash = "ea22573845d1317980c81dad123724bec18824d14799059b26101eaf49905eb8"
