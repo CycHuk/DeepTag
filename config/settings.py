@@ -47,6 +47,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'apps.accounts',
+    'apps.projects',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -109,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
-# LOGIN_REDIRECT_URL = reverse_lazy('projects')
+LOGIN_REDIRECT_URL = reverse_lazy('projects:index')
 LOGIN_URL = reverse_lazy("auth:login")
 LOGOUT_REDIRECT_URL = reverse_lazy('auth:login')
 
