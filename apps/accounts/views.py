@@ -12,7 +12,7 @@ class MyLoginView(LoginView):
     def form_invalid(self, form):
         self.request.session['invalid_form_data'] = self.request.POST
 
-        return redirect('login')
+        return redirect('auth:login')
 
     def get(self, request, *args, **kwargs):
         saved_form_data = request.session.pop('invalid_form_data', None)
