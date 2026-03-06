@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from django.urls import reverse_lazy
 from dotenv import load_dotenv
 from pathlib import Path
 import os
@@ -109,6 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
+# LOGIN_REDIRECT_URL = reverse_lazy('projects')
+LOGOUT_REDIRECT_URL = reverse_lazy('auth:login')
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
