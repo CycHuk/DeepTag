@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto">
+
+    <div class="mb-8 text-center">
+      <h1 class="text-3xl font-bold text-gray-700">Создать новый проект</h1>
+      <p class="mt-2 text-gray-600">Добавьте название, описание и метки</p>
+    </div>
+
+    <form method="post" class="bg-white shadow-xl rounded-xl overflow-hidden">
+      {% csrf_token %}
+
+      <!-- Основные поля проекта -->
+      <div class="px-6 py-7 border-b border-gray-200">
+        <div class="space-y-6">
+
+          <div>
+            <label for="{{ form.name.id_for_label }}"
+                   class="block text-sm font-medium text-gray-700 mb-1">
+              Название проекта <span class="text-red-500">*</span>
+            </label>
+            {{ form.name }}
+            {% if form.name.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.description.id_for_label }}"
+                   class="block text-sm font-medium text-gray-700 mb-1">
+              Описание
+            </label>
+            {{ form.description }}
+            {% if form.description.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Блок меток -->
+      <div class="px-6 py-7 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Метки / Теги</h2>
+
+        <div id="label-formset" class="space-y-4">
+          {{ label_formset.management_form }}
+
+          {% for form in label_formset %}
+            <div class="label-form flex items-end gap-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Название метки</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                  <p class="mt-1 text-xs text-red-600">{{ form.name.errors.0 }}</p>
+                {% endif %}
+              </div>
+
+              {% if form.color %}
+              <div class="w-28">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Цвет</label>
+                {{ form.color }}
+              </div>
+              {% endif %}
+
+              <div class="pb-2">
+                <button type="button"
+                        class="text-red-600 hover:text-red-800 font-medium text-sm remove-label-btn">
+                  Удалить
+                </button>
+              </div>
+
+              {% if form.instance.pk %}
+                {{ form.DELETE }}
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <!-- Шаблон для новых строк (скрытый) -->
+          <div id="label-empty-form" class="hidden">
+            <div class="label-form flex items-end gap-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Название метки</label>
+                {{ label_formset.empty_form.name }}
+              </div>
+
+              {% if label_formset.empty_form.color %}
+              <div class="w-28">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Цвет</label>
+                {{ label_formset.empty_form.color }}
+              </div>
+              {% endif %}
+
+              <div class="pb-2">
+                <button type="button"
+                        class="text-red-600 hover:text-red-800 font-medium text-sm remove-label-btn">
+                  Удалить
+                </button>
+              </div>
+
+              {{ label_formset.empty_form.DELETE }}
+            </div>
+          </div>
+
+        </div>
+
+        <div class="mt-5">
+          <button type="button" id="add-label-btn"
+                  class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Добавить метку
+          </button>
+        </div>
+      </div>
+
+      <!-- Кнопки -->
+      <div class="px-6 py-5 bg-gray-50 flex justify-end gap-4">
+        <a href="{% url 'projects:index' %}"
+           class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
+          Отмена
+        </a>
+        <button type="submit"
+                class="px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+          Создать проект
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const addBtn = document.getElementById('add-label-btn');
+    const formsetContainer = document.getElementById('label-formset');
+    const emptyFormDiv = document.getElementById('label-empty-form');
+    const template = emptyFormDiv.querySelector('.label-form');
+
+    if (!template) {
+      console.error('Шаблон пустой формы не найден');
+      return;
+    }
+
+    // Копируем HTML один раз
+    const templateHTML = template.outerHTML;
+
+    let formIndex = {{ label_formset.total_form_count|default:0 }};
+
+    addBtn.addEventListener('click', () => {
+      formIndex++;
+
+      // Создаём новую форму из шаблона
+      const newFormHTML = templateHTML.replace(/__prefix__/g, formIndex - 1);
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = newFormHTML;
+      const newForm = tempDiv.firstElementChild;
+
+      newForm.classList.remove('hidden'); // на всякий случай
+      formsetContainer.insertBefore(newForm, emptyFormDiv);
+
+      // Обновляем TOTAL_FORMS
+      const totalFormsInput = document.querySelector('input[name$="-TOTAL_FORMS"]');
+      if (totalFormsInput) {
+        totalFormsInput.value = formIndex;
+      }
+    });
+
+    // Удаление (скрытие + отметка DELETE)
+    formsetContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('remove-label-btn')) {
+        const formRow = e.target.closest('.label-form');
+        if (formRow) {
+          const deleteInput = formRow.querySelector('input[name$="-DELETE"]');
+          if (deleteInput) {
+            deleteInput.checked = true;
+          }
+          formRow.style.display = 'none';
+        }
+      }
+    });
+  });
+</script>
+
+{% endblock %}
