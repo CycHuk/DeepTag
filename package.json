@@ -11,8 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tailwindcss/postcss": "^4.2.1",
-    "daisyui": "^5.5.19",
+    "flyonui": "^2.4.1",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
