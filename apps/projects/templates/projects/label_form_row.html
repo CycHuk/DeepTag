@@ -1,0 +1,10 @@
+<div id="labels_formset-{{ index }}" class="{% if deleted %}hidden{% endif %}">
+    <label for="labels_formset-{{ index }}-name">Название</label>
+    <input type="text" id="labels_formset-{{ index }}-name" name="labels_formset-{{ index }}-name" value="{{ name|default:''}}">
+
+    <label for="labels_formset-{{ index }}-color">Цвет</label>
+    <input type="color" id="labels_formset-{{ index }}-color" name="labels_formset-{{ index }}-color" value="{{ color|default:''}}">
+
+    <label for="labels_formset-{{ index }}-DELETE">Удалить</label>
+    <input type="checkbox" onclick="removeItemForm({{ index }})" name="labels_formset-{{ index }}-DELETE" id="labels_formset-{{ index }}-DELETE" {% if deleted %}checked{% endif %}>
+</div>

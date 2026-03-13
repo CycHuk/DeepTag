@@ -12,10 +12,11 @@ class ProjectCreateForm(forms.ModelForm):
         model = Project
         fields = ['name', 'description']
 
+
 LabelsFormSet = inlineformset_factory(
     Project,
     Label,
     form=LabelCreateForm,
-    extra=0
+    extra=0,
+    can_delete=True
 )
-

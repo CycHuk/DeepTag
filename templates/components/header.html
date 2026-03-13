@@ -1,0 +1,91 @@
+<header class="navbar bg-base-100 border-b border-base-200 px-4 lg:px-8">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+        <div class="navbar-start">
+            <a href="{% url 'projects:index' %}" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-base-200 flex items-center justify-center">
+                    <svg class="w-6 h-6 fill-current text-base-content" viewBox="0 0 32 32">
+                        <path d="M12,1.64c-0.002,0-0.004,0-0.006,0c-1.473,0-2.691,0.759-3.239,2h-0.48c-1.271,0-2.478,0.425-3.398,1.199C3.892,5.659,3.354,6.79,3.352,8.021c-0.001,0.995,0.526,2.097,1.025,2.791c-2.223,0.77-3.734,2.633-3.737,4.688c-0.003,2.046,1.507,3.91,3.734,4.687c-0.506,0.692-1.044,1.788-1.045,2.766c-0.003,2.426,2.215,4.403,4.947,4.408h0.48c0.543,1.238,1.764,1.998,3.244,2c1.972,0,3.351-1.381,3.354-3.36V5C15.363,3.025,13.982,1.643,12,1.64z"/>
+                    </svg>
+                </div>
+
+                <span class="text-xl font-bold">
+                    Deep<span class="text-primary">Tag</span>
+                </span>
+            </a>
+        </div>
+
+        <div class="navbar-end">
+            <!-- FlyonUI Dropdown с темой и пользователем -->
+            <div class="dropdown relative inline-flex">
+                <button id="user-dropdown" type="button" class="dropdown-toggle flex items-center gap-2"
+                        aria-haspopup="menu" aria-expanded="false" aria-label="User menu">
+                    {{ user.full_name }}
+                    <span class="icon-[ic--sharp-account-circle] size-10"></span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-64 p-2" role="menu"
+                    aria-orientation="vertical" aria-labelledby="user-dropdown">
+                    <!-- Информация о пользователе -->
+                    <li class="dropdown-header gap-2 mb-2">
+                        <div class="avatar">
+                            <div class="w-10 rounded-full bg-base-200 flex items-center justify-center">
+                                <span class="icon-[ic--sharp-account-circle] size-8 text-base-content/50"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="text-base-content text-base font-semibold">{{ user.full_name }}</h6>
+                            <small class="text-base-content/50 text-sm font-normal">{{ user.email }}</small>
+                        </div>
+                    </li>
+
+                    <!-- Разделитель -->
+                    <li>
+                        <hr class="dropdown-divider"/>
+                    </li>
+
+                    <!-- Секция выбора темы -->
+                    <li class="dropdown-item px-3 py-2">
+                        <div class="w-full">
+                            <h6 class="text-sm font-semibold text-base-content/70 mb-2">Тема оформления</h6>
+                            <div class="flex flex-col gap-2">
+                                <div>
+                                    <div class="flex items-center justify-between gap-4">
+                                        <label class="label-text text-sm" for="defaultTheme">Default</label>
+                                        <input type="radio" name="theme-radios" class="radio theme-controller"
+                                               id="defaultTheme" value="default" checked/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between gap-4">
+                                        <label class="label-text text-sm" for="corporateTheme">Corporate</label>
+                                        <input type="radio" name="theme-radios" class="radio theme-controller"
+                                               id="corporateTheme" value="corporate"/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between gap-4">
+                                        <label class="label-text text-sm" for="gourmentTheme">Gourmet</label>
+                                        <input type="radio" name="theme-radios" class="radio theme-controller"
+                                               id="gourmentTheme" value="gourmet"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Разделитель и выход -->
+                    <li>
+                        <hr class="dropdown-divider"/>
+                    </li>
+                    <li>
+                        <form method="post" action="{% url 'auth:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item text-red-500 font-semibold">
+                                Выйти
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
