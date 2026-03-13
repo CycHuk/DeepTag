@@ -5,6 +5,20 @@
 {% include "components/header.html" %}
 
 <main class="container mx-auto p-6 flex flex-col items-center">
+    <!-- BREADCRUMBS -->
+    <nav class="w-full max-w-2xl mb-6" aria-label="Breadcrumb">
+        <ul class="flex text-sm text-base-content/70 gap-x-2 items-center">
+            <li>
+                <a href="{% url 'projects:index' %}" class="hover:underline">Проекты</a>
+            </li>
+            <li class="flex items-center">
+                <span class="icon-[tabler--chevron-right] w-4 h-4"></span>
+            </li>
+            <li aria-current="page" class="text-base-content font-medium">
+                Создать проект
+            </li>
+        </ul>
+    </nav>
     <div class="card w-full max-w-2xl shadow-lg p-6 bg-base-100 rounded-lg">
         <h1 class="text-3xl font-bold mb-6 text-center">Создание проекта</h1>
 
