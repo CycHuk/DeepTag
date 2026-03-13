@@ -1,10 +1,23 @@
-<div id="labels_formset-{{ index }}" class="{% if deleted %}hidden{% endif %}">
-    <label for="labels_formset-{{ index }}-name">Название</label>
-    <input type="text" id="labels_formset-{{ index }}-name" name="labels_formset-{{ index }}-name" value="{{ name|default:''}}">
+<div id="labels_formset-{{ index }}" class="flex items-center gap-3 p-2 rounded-lg border {% if deleted %}hidden{% endif %} bg-base-100 shadow-sm">
+    <input type="text"
+           id="labels_formset-{{ index }}-name"
+           name="labels_formset-{{ index }}-name"
+           placeholder="Название класса"
+           class="input input-bordered input-sm w-32"
+           value="{{ name|default:'' }}">
 
-    <label for="labels_formset-{{ index }}-color">Цвет</label>
-    <input type="color" id="labels_formset-{{ index }}-color" name="labels_formset-{{ index }}-color" value="{{ color|default:''}}">
+    <input type="color"
+           id="labels_formset-{{ index }}-color"
+           name="labels_formset-{{ index }}-color"
+           class="w-10 h-10 p-0 border-none rounded"
+           value="{{ color|default:'#A0A0A0'}}">
 
-    <label for="labels_formset-{{ index }}-DELETE">🗑️</label>
-    <input type="checkbox" onclick="removeItemForm({{ index }})" name="labels_formset-{{ index }}-DELETE" id="labels_formset-{{ index }}-DELETE" {% if deleted %}checked{% endif %} class="hidden">
+    <label for="labels_formset-{{ index }}-DELETE" onclick="removeItemForm({{ index }})"
+            class="btn btn-error btn-sm btn-circle flex justify-center items-center tooltip tooltip-left"
+            data-tip="Удалить метку">🗑️</label>
+
+    <input type="checkbox"
+           id="labels_formset-{{ index }}-DELETE"
+           name="labels_formset-{{ index }}-DELETE"
+           class="hidden" {% if deleted %}checked{% endif %}>
 </div>

@@ -2,50 +2,71 @@
 {% load static %}
 
 {% block content %}
-    {% include "components/header.html" %}
-    <main class="flex items-center flex-col">
-        <h1 class="">Создание проекта</h1>
-        <form method="post" class="flex flex-col space-y-4 max-w-md" autocomplete="off">
+{% include "components/header.html" %}
+
+<main class="container mx-auto p-6 flex flex-col items-center">
+    <div class="card w-full max-w-2xl shadow-lg p-6 bg-base-100 rounded-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center">Создание проекта</h1>
+
+        <form method="post" class="flex flex-col gap-6" autocomplete="off">
             {% csrf_token %}
-            <div class="flex flex-col">
-                <label for="name" class="label-text">Название</label>
-                <input type="text" name="name" id="name" class="input {% if form.name.errors %} is-invalid {% endif %}"
+
+            <!-- Название проекта -->
+            <div class="form-control w-full">
+                <label for="name" class="label">
+                    <span class="label-text">Название</span>
+                </label>
+                <input type="text" id="name" name="name"
+                       class="input input-bordered w-full {% if form.name.errors %}input-error{% endif %}"
                        value="{{ form.name.value|default:'' }}">
                 {% if form.name.errors %}
-                    <span class="helper-text">{{ form.name.errors.as_text }}</span>
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.name.errors.as_text }}</span>
+                    </label>
                 {% endif %}
             </div>
 
-            <div class="flex flex-col">
-                <label for="description" class="label-text">Описание</label>
-                <textarea name="description" id="description"
-                          class="textarea max-w-sm {% if form.description.errors %} is-invalid {% endif %}">{{ form.description.value|default:'' }}</textarea>
-                {% if form.description.errors %}
-                    <span class="helper-text">{{ form.description.errors.as_text }}</span>
-                {% endif %}
+            <!-- Описание проекта -->
+            <div class="form-control w-full">
+                <label for="description" class="label">
+                    <span class="label-text">Описание</span>
+                </label>
+                <textarea id="description" name="description" rows="4"
+                          class="textarea textarea-bordered w-full resize-none {% if form.description.errors %}input-error{% endif %}">{{ form.description.value|default:'' }}</textarea>
             </div>
 
-            <div class="bg-base-200">
-                <p>Классы</p>
-                <button type="button" hx-get="{% url 'projects:label-add' %}" hx-target="#labels-container" hx-swap="beforeend" hx-include="[name='labels_formset-TOTAL_FORMS']">Добавить</button>
+            <!-- Метки проекта -->
+            <div class="form-control w-full bg-base-200 p-4 rounded-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="font-semibold text-lg">Классы</p>
+                    <button type="button"
+                            class="btn btn-sm btn-outline"
+                            hx-get="{% url 'projects:label-add' %}"
+                            hx-target="#labels-container"
+                            hx-swap="beforeend"
+                            hx-include="[name='labels_formset-TOTAL_FORMS']">
+                        Добавить
+                    </button>
+                </div>
+
                 {{ labels_formset.management_form }}
-                <div id="labels-container">
+                <div id="labels-container" class="flex flex-wrap justify-center items-center gap-4 mt-2">
                     {% for form in labels_formset %}
                         {% include "projects/label_form_row.html" with index=forloop.counter0 name=form.name.value color=form.color.value deleted=form.DELETE.value %}
                     {% endfor %}
-                    {% if labels_formset.non_form_errors %}
-                        {% if labels_formset.non_form_errors %}
-                            <p class="text-error">{{ labels_formset.non_form_errors.0 }}</p>
-                        {% endif %}
-                    {% endif %}
                 </div>
+                {% if labels_formset.non_form_errors %}
+                    <p class="text-error mt-2">{{ labels_formset.non_form_errors.0 }}</p>
+                {% endif %}
             </div>
 
-            <div>
-                <button class="btn btn-primary">Создать</button>
+            <!-- Кнопка создания -->
+            <div class="form-control mt-4">
+                <button class="btn btn-primary w-full">Создать проект</button>
             </div>
         </form>
-    </main>
+    </div>
+</main>
 
-    <script src="{% static 'projects/main.js' %}"></script>
+<script src="{% static 'projects/main.js' %}"></script>
 {% endblock %}
