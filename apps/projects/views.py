@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 
 from .forms import ProjectCreateForm, LabelsFormSet
 from .models import Project
 
-def index(request):
-    return render(request, 'projects/index.html')
-
+class ProjectListView(ListView):
+    model = Project
+    template_name = "projects/index.html"
+    paginate_by = 6
+    context_object_name = "projects"
 
 class ProjectCreateView(CreateView):
     template_name = "projects/create.html"
