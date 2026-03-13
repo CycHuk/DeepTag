@@ -5,6 +5,6 @@
     <label for="labels_formset-{{ index }}-color">Цвет</label>
     <input type="color" id="labels_formset-{{ index }}-color" name="labels_formset-{{ index }}-color" value="{{ color|default:''}}">
 
-    <label for="labels_formset-{{ index }}-DELETE">Удалить</label>
-    <input type="checkbox" onclick="removeItemForm({{ index }})" name="labels_formset-{{ index }}-DELETE" id="labels_formset-{{ index }}-DELETE" {% if deleted %}checked{% endif %}>
+    <label for="labels_formset-{{ index }}-DELETE">🗑️</label>
+    <input type="checkbox" onclick="removeItemForm({{ index }})" name="labels_formset-{{ index }}-DELETE" id="labels_formset-{{ index }}-DELETE" {% if deleted %}checked{% endif %} class="hidden">
 </div>
