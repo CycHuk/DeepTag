@@ -37,7 +37,7 @@
                         </p>
                     </div>
                     <div class="flex gap-2">
-                        <a href="{% url 'projects:index' %}" class="btn btn-sm btn-outline">Редактировать</a>
+                        <a href="{% url 'projects:edit' project.id %}" class="btn btn-sm btn-outline">Редактировать</a>
                         {% if user.is_superuser %}
                         <form method="post" action="{% url 'projects:delete' project.id %}" class="inline">
                             {% csrf_token %}

@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, DetailView, DeleteView
+from django.views.generic import CreateView, ListView, DetailView, DeleteView, UpdateView
 
 from .forms import ProjectCreateForm, LabelsFormSet
 from .models import Project
@@ -69,3 +69,43 @@ class ProjectDeleteView(UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         return self.request.user.is_superuser
+
+class ProjectEditView(UpdateView):
+    model = Project
+    template_name = "projects/edit.html"
+    form_class = ProjectCreateForm
+
+    def get_success_url(self):
+        return reverse_lazy('projects:detail', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form_data = self.request.session.pop('form_projects_edit', None)
+
+        if form_data:
+            context['form'] = self.form_class(form_data, instance=self.object)
+            context['labels_formset'] = LabelsFormSet(data=form_data, instance=self.object, prefix='labels_formset')
+        else:
+            context['labels_formset'] = LabelsFormSet(instance=self.object, prefix='labels_formset')
+
+        return context
+
+    def form_invalid(self, form):
+        self.request.session['form_projects_edit'] = self.request.POST
+
+        return redirect('projects:edit', pk=self.object.pk)
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        labels_formset = LabelsFormSet(
+            self.request.POST,
+            instance=self.object,
+            prefix='labels_formset'
+        )
+
+        if labels_formset.is_valid():
+            labels_formset.save()  # новые и существующие labels сохранятся
+            return redirect('projects:detail', pk=self.object.pk)
+
+        return self.form_invalid(form)
