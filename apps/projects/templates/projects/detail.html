@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include "components/header.html" %}
+
+<div class="container mx-auto max-w-7xl px-6 py-8">
+
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs mb-6" aria-label="Breadcrumb">
+        <ul class="flex text-sm text-base-content/70 gap-x-2 items-center">
+            <li>
+                <a href="{% url 'projects:index' %}" class="hover:underline">Проекты</a>
+            </li>
+            <li class="breadcrumbs-separator rtl:rotate-180 flex items-center">
+                <span class="icon-[tabler--chevron-right] w-4 h-4"></span>
+            </li>
+            <li aria-current="page" class="font-medium">{{ project.name }}</li>
+        </ul>
+    </nav>
+
+    <!-- Main Layout: Left = Project, Right = Chat -->
+    <div class="flex flex-col lg:flex-row gap-6">
+
+        <!-- Left Column: Project Info + Labels -->
+        <div class="flex-1 lg:w-1/2 flex flex-col gap-6">
+
+            <!-- Card: Project Info -->
+            <div class="flex flex-col bg-base-100 border border-base-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center p-6 border-b border-base-200 gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold">{{ project.name }}</h1>
+                        <p class="text-sm text-base-content/60 mt-1">
+                            Дата создания: {{ project.created_at|date:"d M Y H:i" }}
+                        </p>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{% url 'projects:index' %}" class="btn btn-sm btn-outline">Редактировать</a>
+                        {% if user.is_superuser %}
+                        <form method="post" action="{% url 'projects:delete' project.id %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-error">Удалить</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="p-6 bg-base-200/50 border-b border-base-200">
+                    <h2 class="font-semibold text-xl mb-4">Описание проекта</h2>
+                    <p class="text-base-content/80 leading-relaxed line-clamp-6">
+                        {{ project.description|default:"Описание отсутствует" }}
+                    </p>
+                </div>
+
+                <!-- Labels Block -->
+                <div class="p-6">
+                    <h2 class="font-semibold text-xl mb-4">Классы проекта</h2>
+                    {% if project.labels.all %}
+                    <div class="flex flex-wrap gap-2">
+                        {% for label in project.labels.all %}
+                            <span class="text-xs font-medium px-3 py-1 rounded-full text-white shadow-sm" style="background-color: {{ label.color }};">
+                                {{ label.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-base-content/50 italic">Классы не добавлены</p>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right Column: Chat Placeholder -->
+        <div class="flex-1 lg:w-1/2 bg-base-200 rounded-xl shadow-md p-6 flex flex-col">
+            <h2 class="font-semibold text-xl mb-4">Чат проекта</h2>
+            <div class="flex-1 border border-base-300 rounded-lg p-4 text-base-content/50 flex items-center justify-center">
+                <span>Здесь будет чат проекта (пока без реализации)</span>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

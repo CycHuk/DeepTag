@@ -64,7 +64,7 @@
                 <span class="text-xs text-base-content/60">
                     {{ project.created_at|date:"d M Y" }}
                 </span>
-                <a href="#" class="btn btn-sm btn-outline group-hover:btn-primary transition">
+                <a href="{% url 'projects:detail' project.id %}" class="btn btn-sm btn-outline group-hover:btn-primary transition">
                     Открыть
                 </a>
             </div>

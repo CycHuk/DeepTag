@@ -1,6 +1,7 @@
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView, DeleteView
 
 from .forms import ProjectCreateForm, LabelsFormSet
 from .models import Project
@@ -57,9 +58,14 @@ def add_label_form(request):
 
     return render(request,"projects/label_form_row.html", {'index': form_index})
 
+class ProjectDetailView(DetailView):
+    model = Project
+    template_name = "projects/detail.html"
+    context_object_name = "project"
 
+class ProjectDeleteView(UserPassesTestMixin, DeleteView):
+    model = Project
+    success_url = reverse_lazy('projects:index')
 
-
-
-
-
+    def test_func(self):
+        return self.request.user.is_superuser
