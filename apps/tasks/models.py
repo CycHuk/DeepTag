@@ -3,6 +3,7 @@ import uuid
 
 from apps.accounts.models import User
 from apps.projects.models import Project
+from apps.tasks.utils import process_image
 
 
 class Task(models.Model):
@@ -36,3 +37,26 @@ class Task(models.Model):
         self.assigned_to = user
         self.status = self.Status.IN_PROGRESS
         self.save()
+
+def task_image_path(instance, filename):
+    return f'tasks/{instance.task.id}/{instance.id}.jpg'
+
+class Image(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    task = models.ForeignKey(Task, related_name="images", on_delete=models.CASCADE)
+
+    file = models.ImageField(upload_to=task_image_path)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'images'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        processed_file = process_image(self.file, f"{self.id}.jpg")
+        self.file.save(processed_file.name, processed_file, save=False)
+
+        super().save(*args, **kwargs)

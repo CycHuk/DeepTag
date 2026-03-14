@@ -154,3 +154,6 @@ AWS_QUERYSTRING_AUTH=os.getenv('AWS_QUERYSTRING_AUTH', 'true').lower() == 'true'
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/"
+
+# Images
+MAX_IMAGE_SIDE = 2048
