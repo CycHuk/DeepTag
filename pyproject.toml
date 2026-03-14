@@ -10,6 +10,8 @@ dependencies = [
     "django (==5.2)",
     "python-dotenv (>=1.2.2,<2.0.0)",
     "django-decorator-include (>=3.3,<4.0)",
+    "django-storages (>=1.14.6,<2.0.0)",
+    "boto3 (>=1.42.68,<2.0.0)",
 ]
 
 

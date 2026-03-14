@@ -42,7 +42,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-
+    'storages',
 ]
 
 LOCAL_APPS = [
@@ -143,3 +143,14 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# AWS
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.getenv('AWS_ENDPOINT_URL')
+AWS_QUERYSTRING_AUTH=os.getenv('AWS_QUERYSTRING_AUTH', 'true').lower() == 'true'
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/"
