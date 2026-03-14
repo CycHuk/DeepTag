@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+from apps.tasks.views import TaskCreateView
 app_name = 'projects'
 
 urlpatterns = [
@@ -9,5 +10,6 @@ urlpatterns = [
     path("<uuid:pk>/", views.ProjectDetailView.as_view(), name="detail"),
     path('<uuid:pk>/delete/', views.ProjectDeleteView.as_view(), name='delete'),
     path('<uuid:pk>/edit/', views.ProjectEditView.as_view(), name='edit'),
+    path('<uuid:pk>/task/create', TaskCreateView.as_view(), name='create_task'),
     path("", views.ProjectListView.as_view(), name="index")
 ]
