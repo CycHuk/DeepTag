@@ -47,6 +47,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'apps.accounts',
+    'apps.labels',
     'apps.projects',
 ]
 
@@ -110,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
-LOGIN_REDIRECT_URL = reverse_lazy('projects:index')
+# LOGIN_REDIRECT_URL = reverse_lazy('projects')
 LOGIN_URL = reverse_lazy("auth:login")
 LOGOUT_REDIRECT_URL = reverse_lazy('auth:login')
 
@@ -132,6 +133,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
+    BASE_DIR / "apps" / "projects" / "static",
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"

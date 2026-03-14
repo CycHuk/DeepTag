@@ -1,5 +1,113 @@
 {% extends "base.html" %}
-
 {% block content %}
-    Тут будут ваши проекты 
+
+{% include "components/header.html" %}
+
+<div class="max-w-7xl mx-auto px-6 py-8">
+
+    <!-- HEADER -->
+    <div class="flex items-center justify-between mb-10">
+        <div>
+            <h1 class="text-3xl font-bold">Проекты</h1>
+            <p class="text-base-content/60 mt-1">
+                Управляйте своими проектами
+            </p>
+        </div>
+        <a href="{% url "projects:create" %}" class="btn btn-primary">
+            + Новый проект
+        </a>
+    </div>
+
+    <!-- GRID DASHBOARD -->
+    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3 items-start">
+
+        {% for project in projects|slice:":6" %}
+
+        <!-- CARD -->
+        <div class="group flex flex-col bg-base-100 border border-base-200 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+
+            <!-- BODY -->
+            <div class="p-6 flex flex-col gap-4 flex-1">
+                <!-- TITLE -->
+                <h2 class="font-semibold text-lg text-base-content group-hover:text-primary transition">
+                    {{ project.name }}
+                </h2>
+
+                <!-- DESCRIPTION -->
+                <p class="text-sm text-base-content/70 leading-relaxed line-clamp-1">
+                    {{ project.description|default:"Описание отсутствует" }}
+                </p>
+            </div>
+
+            <!-- LABELS -->
+            <div class="bg-base-200/60 px-6 py-4 border-t">
+                {% if project.labels.all %}
+                    <div class="flex flex-wrap gap-2">
+                        {% for label in project.labels.all|slice:":3" %}
+                        <span class="text-xs font-medium px-3 py-1 rounded-full text-white shadow-sm" style="background-color: {{ label.color }};">
+                            {{ label.name }}
+                        </span>
+                        {% endfor %}
+                        {% if project.labels.count > 3 %}
+                        <span class="badge badge-outline text-xs">
+                            +{{ project.labels.count|add:"-3" }}
+                        </span>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-xs text-base-content/50 italic">Классы не добавлены</p>
+                {% endif %}
+            </div>
+
+            <!-- FOOTER -->
+            <div class="px-6 py-4 mt-auto flex items-center justify-between border-t bg-base-100">
+                <span class="text-xs text-base-content/60">
+                    {{ project.created_at|date:"d M Y" }}
+                </span>
+                <a href="{% url 'projects:detail' project.id %}" class="btn btn-sm btn-outline group-hover:btn-primary transition">
+                    Открыть
+                </a>
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="flex justify-center mt-12">
+        <nav class="flex items-center gap-x-1">
+
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-text">
+                Previous
+            </a>
+            {% endif %}
+
+            <div class="flex items-center gap-x-1">
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <button class="btn btn-text btn-square text-bg-primary" aria-current="page">
+                            {{ num }}
+                        </button>
+                    {% else %}
+                        <a href="?page={{ num }}" class="btn btn-text btn-square">
+                            {{ num }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-text">
+                Next
+            </a>
+            {% endif %}
+
+        </nav>
+    </div>
+
+</div>
+
 {% endblock %}

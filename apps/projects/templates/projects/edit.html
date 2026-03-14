@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+{% include "components/header.html" %}
+
+<main class="container mx-auto p-6 flex flex-col items-center">
+    <!-- BREADCRUMBS -->
+    <nav class="w-full max-w-2xl mb-6" aria-label="Breadcrumb">
+        <ul class="flex text-sm text-base-content/70 gap-x-2 items-center">
+            <li>
+                <a href="{% url 'projects:index' %}" class="hover:underline">Проекты</a>
+            </li>
+            <li class="flex items-center">
+                <span class="icon-[tabler--chevron-right] w-4 h-4"></span>
+            </li>
+            <li>
+                <a href="{% url 'projects:detail' project.id %}" class="hover:underline">{{ project.name }}</a>
+            </li>
+            <li class="flex items-center">
+                <span class="icon-[tabler--chevron-right] w-4 h-4"></span>
+            </li>
+            <li aria-current="page" class="text-base-content font-medium">
+                Редактирование
+            </li>
+        </ul>
+    </nav>
+
+    <div class="card w-full max-w-2xl shadow-lg p-6 bg-base-100 rounded-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center">Редактирование проекта</h1>
+
+        <form method="post" class="flex flex-col gap-6" autocomplete="off">
+            {% csrf_token %}
+
+            <!-- Название проекта -->
+            <div class="form-control w-full">
+                <label for="name" class="label">
+                    <span class="label-text">Название</span>
+                </label>
+                <input type="text" id="name" name="name"
+                       class="input input-bordered w-full {% if form.name.errors %}input-error{% endif %}"
+                       value="{{ form.name.value|default:'' }}">
+                {% if form.name.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ form.name.errors.as_text }}</span>
+                    </label>
+                {% endif %}
+            </div>
+
+            <!-- Описание проекта -->
+            <div class="form-control w-full">
+                <label for="description" class="label">
+                    <span class="label-text">Описание</span>
+                </label>
+                <textarea id="description" name="description" rows="4"
+                          class="textarea textarea-bordered w-full resize-none {% if form.description.errors %}input-error{% endif %}">{{ form.description.value|default:'' }}</textarea>
+            </div>
+
+            <!-- Метки проекта -->
+            <div class="form-control w-full bg-base-200 p-4 rounded-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="font-semibold text-lg">Классы</p>
+                    <button type="button"
+                            class="btn btn-sm btn-outline"
+                            hx-get="{% url 'projects:label-add' %}"
+                            hx-target="#labels-container"
+                            hx-swap="beforeend"
+                            hx-include="[name='labels_formset-TOTAL_FORMS']">
+                        Добавить
+                    </button>
+                </div>
+
+                {{ labels_formset.management_form }}
+                <div id="labels-container" class="flex flex-wrap justify-center items-center gap-4 mt-2">
+                    {% for form in labels_formset %}
+                        {% include "projects/label_form_row.html" with index=forloop.counter0 name=form.name.value color=form.color.value deleted=form.DELETE.value id=form.id.value %}
+                    {% endfor %}
+                </div>
+                {% if labels_formset.non_form_errors %}
+                    <p class="text-error mt-2">{{ labels_formset.non_form_errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Кнопка сохранения -->
+            <div class="form-control mt-4">
+                <button class="btn btn-primary w-full">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</main>
+<script src="{% static 'projects/main.js' %}"></script>
+{% endblock %}
