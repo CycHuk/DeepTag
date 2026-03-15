@@ -1,32 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% include 'components/header.html' %}
-<main class="container mx-auto p-6 flex flex-col items-center">
-<!-- BREADCRUMBS -->
-<nav class="w-full max-w-2xl mb-6" aria-label="Breadcrumb">
-    <ul class="flex text-sm text-base-content/70 gap-x-2 items-center">
-        <li>
-            <a href="{% url 'projects:index' %}" class="hover:underline">Проекты</a>
-        </li>
-        <li class="flex items-center">
-            <span class="icon-[tabler--chevron-right] w-4 h-4"></span>
-        </li>
-        <li>
-            <a href="{% url 'projects:detail' project.id %}" class="hover:underline">{{ project.name }}</a>
-        </li>
-        <li class="flex items-center">
-            <span class="icon-[tabler--chevron-right] w-4 h-4"></span>
-        </li>
-        <li aria-current="page" class="text-base-content font-medium">
-            Создать задачу
-        </li>
-    </ul>
-</nav>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Создать</button>
-</form>
-</main>
+    {% include 'components/header.html' %}
+    
+    <main class="container mx-auto p-6 flex flex-col items-center"> <!-- BREADCRUMBS -->
+        <nav class="w-full max-w-2xl mb-6" aria-label="Breadcrumb">
+            <ul class="flex text-sm text-base-content/70 gap-x-2 items-center">
+                <li><a href="{% url 'projects:index' %}" class="hover:underline">Проекты</a></li>
+                <li class="flex items-center"><span class="icon-[tabler--chevron-right] w-4 h-4"></span></li>
+                <li><a href="{% url 'projects:detail' project.id %}" class="hover:underline">{{ project.name }}</a></li>
+                <li class="flex items-center"><span class="icon-[tabler--chevron-right] w-4 h-4"></span></li>
+                <li aria-current="page" class="text-base-content font-medium"> Создать задачу</li>
+            </ul>
+        </nav>
+        <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+            <div><label for="type" class="label-text">Тип</label> <select class="select max-w-sm appearance-none"
+                                                                          name="type" id="type">
+                <option value="train" selected>Training</option>
+                <option value="val">Validation</option>
+                <option value="test">Testing</option>
+            </select></div>
+            <div><label for="images">Изображения</label> <input id="images" type="file" name="images" accept="image/*"
+                                                                multiple class="input max-w-sm"></div>
+            <button type="submit">Создать</button>
+        </form>
+    </main>
+
+
 {% endblock %}

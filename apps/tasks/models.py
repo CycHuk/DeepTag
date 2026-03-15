@@ -54,9 +54,10 @@ class Image(models.Model):
         db_table = 'images'
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        if not self.id:
+            super().save(*args, **kwargs)
 
         processed_file = process_image(self.file, f"{self.id}.jpg")
         self.file.save(processed_file.name, processed_file, save=False)
 
-        super().save(*args, **kwargs)
+        super().save(update_fields=['file', 'updated_at'])

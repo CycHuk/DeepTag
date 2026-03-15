@@ -1,10 +1,10 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
 from apps.projects.models import Project
 from apps.tasks.forms import TaskCreateForm
-from apps.tasks.models import Task
+from apps.tasks.models import Task, Image
 
 
 class TaskCreateView(CreateView):
@@ -23,5 +23,16 @@ class TaskCreateView(CreateView):
 
     def form_valid(self, form):
         project_id = self.kwargs.get('pk')
-        form.instance.project = get_object_or_404(Project, id=project_id)
+        project = get_object_or_404(Project, id=project_id)
+
+        self.object = form.save(commit=False)
+        self.object.project = project
+        self.object.save()
+
+        images = form.cleaned_data.get('images')
+        if images:
+            for img in images:
+                Image.objects.create(task=self.object, file=img)
+
         return super().form_valid(form)
+
