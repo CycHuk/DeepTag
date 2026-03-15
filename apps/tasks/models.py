@@ -19,7 +19,7 @@ class Task(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     project = models.ForeignKey(Project, related_name="tasks", on_delete=models.CASCADE)
-    assigned_to = models.ForeignKey(User, related_name="tasks", null=True, blank=True, on_delete=models.SET_NULL)
+    assigned_to = models.ForeignKey(User, related_name="assigned", null=True, blank=True, on_delete=models.SET_NULL)
 
     type = models.CharField(max_length=5, choices=Type.choices, default=Type.TRAIN)
     status = models.CharField(max_length=12, choices=Status.choices, default=Status.IN_PROGRESS)
