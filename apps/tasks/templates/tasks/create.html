@@ -2,48 +2,62 @@
 {% load static %}
 
 {% block content %}
-    {% include 'components/header.html' %}
-    
-    <main class="container mx-auto p-6 flex flex-col items-center">
-        <!-- BREADCRUMBS -->
-        <nav class="w-full max-w-2xl mb-6" aria-label="Breadcrumb">
-            <ul class="flex text-sm text-gray-500 gap-x-2 items-center">
-                <li><a href="{% url 'projects:index' %}" class="hover:underline text-flyon-primary">Проекты</a></li>
-                <li class="flex items-center"><span class="icon-[tabler--chevron-right] w-4 h-4"></span></li>
-                <li><a href="{% url 'projects:detail' project.id %}" class="hover:underline text-flyon-primary">{{ project.name }}</a></li>
-                <li class="flex items-center"><span class="icon-[tabler--chevron-right] w-4 h-4"></span></li>
-                <li aria-current="page" class="font-medium text-gray-800">Создать задачу</li>
-            </ul>
-        </nav>
+{% include 'components/header.html' %}
 
-        <!-- FORM -->
-        <form method="post" enctype="multipart/form-data" class="w-full max-w-md bg-flyon-card p-6 rounded-xl shadow-md space-y-4">
-            {% csrf_token %}
+<main class="container mx-auto p-6 flex flex-col items-center">
 
-            <!-- Тип задачи -->
-            <div class="flex flex-col">
-                <label for="type" class="label font-semibold text-gray-700 mb-2">Тип</label>
-                <select id="type" name="type" class="select input input-bordered w-full">
-                    <option value="train" selected>Training</option>
-                    <option value="val">Validation</option>
-                    <option value="test">Testing</option>
-                </select>
+    <!-- BREADCRUMBS -->
+    <nav class="w-full max-w-2xl mb-6" aria-label="Breadcrumb">
+        <ul class="flex text-sm text-gray-500 gap-x-2 items-center">
+            <li><a href="{% url 'projects:index' %}" class="hover:underline text-flyon-primary">Проекты</a></li>
+            <li class="flex items-center"><span class="icon-[tabler--chevron-right] w-4 h-4"></span></li>
+            <li><a href="{% url 'projects:detail' project.id %}" class="hover:underline text-flyon-primary">{{ project.name }}</a></li>
+            <li class="flex items-center"><span class="icon-[tabler--chevron-right] w-4 h-4"></span></li>
+            <li aria-current="page" class="font-medium text-gray-800">Создать задачу</li>
+        </ul>
+    </nav>
+
+    <!-- FORM -->
+    <form method="post" enctype="multipart/form-data" class="w-full max-w-2xl bg-flyon-card p-6 rounded-xl shadow-md space-y-4" id="taskForm">
+        {% csrf_token %}
+
+        <!-- Тип задачи -->
+        <div class="flex flex-col">
+            <label for="type" class="label text-xl font-semibold mb-2">Тип задачи</label>
+            <select id="type" name="type" class="select input input-bordered w-full">
+                <option value="train" selected>Training</option>
+                <option value="val">Validation</option>
+                <option value="test">Testing</option>
+            </select>
+        </div>
+
+        <!-- Drag & Drop -->
+        <div class="w-full max-w-4xl mb-6">
+            <h2 class="text-xl font-semibold mb-2">Загрузите изображения</h2>
+            <div id="dropArea" class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-flyon-primary transition cursor-pointer">
+                Перетащите изображения сюда или кликните для выбора<br>
+                <small>Максимум 250 фотографий, каждая до 10 МБ</small>
+                <input id="images" type="file" name="images" accept="image/*" multiple class="hidden">
             </div>
+        </div>
 
-            <!-- Изображения -->
-            <div class="flex flex-col">
-                <label for="images" class="label font-semibold text-gray-700 mb-2">Изображения</label>
-                <input id="images" type="file" name="images" accept="image/*" multiple class="input input-bordered w-full">
-            </div>
+        <!-- Кнопка создания -->
+        <div class="flex justify-end">
+            <button type="submit" class="btn btn-primary w-full" onclick="handleFormSubmit()">Создать</button>
+        </div>
+    </form>
 
-            <!-- Кнопка отправки -->
-            <div class="flex justify-end">
-                <button type="submit" class="btn btn-primary w-full" onclick="handleFormSubmit()">Создать</button>
-            </div>
-        </form>
-    </main>
-    <div id="formToast" class="fixed bottom-4 right-4 hidden max-w-sm w-auto alert alert-primary shadow-lg">
-        <span class="loading loading-dots"></span> Задача создается, не закрывайте страницу
+    <!-- Preview -->
+    <div class="w-full max-w-4xl mb-6">
+        <h2 class="text-xl font-semibold mt-4 mb-4 text-center">Превью выбранных изображений</h2>
+        <div id="preview" class="grid grid-cols-5 gap-4"></div>
     </div>
-    <script src="{% static 'tasks/loading_form.js' %}"></script>
+
+</main>
+
+<div id="formToast" class="fixed bottom-4 right-4 hidden max-w-sm w-auto alert alert-primary shadow-lg">
+    <span class="loading loading-dots"></span> Задача создается, не закрывайте страницу
+</div>
+
+<script src="{% static 'tasks/task_image_upload.js' %}"></script>
 {% endblock %}
