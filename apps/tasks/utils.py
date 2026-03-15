@@ -15,7 +15,7 @@ def process_image(file, output_filename):
     if max(img.size) > max_side:
         ratio = max_side / max(img.size)
         new_size = (int(img.width * ratio), int(img.height * ratio))
-        img = img.resize(new_size, PILImage.ANTIALIAS)
+        img = img.resize(new_size, PILImage.Resampling.LANCZOS)
 
     buffer = BytesIO()
     img.save(buffer, format='JPEG', quality=90)
