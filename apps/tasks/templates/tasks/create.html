@@ -3,28 +3,42 @@
 {% block content %}
     {% include 'components/header.html' %}
     
-    <main class="container mx-auto p-6 flex flex-col items-center"> <!-- BREADCRUMBS -->
+    <main class="container mx-auto p-6 flex flex-col items-center">
+        <!-- BREADCRUMBS -->
         <nav class="w-full max-w-2xl mb-6" aria-label="Breadcrumb">
-            <ul class="flex text-sm text-base-content/70 gap-x-2 items-center">
-                <li><a href="{% url 'projects:index' %}" class="hover:underline">Проекты</a></li>
+            <ul class="flex text-sm text-gray-500 gap-x-2 items-center">
+                <li><a href="{% url 'projects:index' %}" class="hover:underline text-flyon-primary">Проекты</a></li>
                 <li class="flex items-center"><span class="icon-[tabler--chevron-right] w-4 h-4"></span></li>
-                <li><a href="{% url 'projects:detail' project.id %}" class="hover:underline">{{ project.name }}</a></li>
+                <li><a href="{% url 'projects:detail' project.id %}" class="hover:underline text-flyon-primary">{{ project.name }}</a></li>
                 <li class="flex items-center"><span class="icon-[tabler--chevron-right] w-4 h-4"></span></li>
-                <li aria-current="page" class="text-base-content font-medium"> Создать задачу</li>
+                <li aria-current="page" class="font-medium text-gray-800">Создать задачу</li>
             </ul>
         </nav>
-        <form method="post" enctype="multipart/form-data"> {% csrf_token %}
-            <div><label for="type" class="label-text">Тип</label> <select class="select max-w-sm appearance-none"
-                                                                          name="type" id="type">
-                <option value="train" selected>Training</option>
-                <option value="val">Validation</option>
-                <option value="test">Testing</option>
-            </select></div>
-            <div><label for="images">Изображения</label> <input id="images" type="file" name="images" accept="image/*"
-                                                                multiple class="input max-w-sm"></div>
-            <button type="submit">Создать</button>
+
+        <!-- FORM -->
+        <form method="post" enctype="multipart/form-data" class="w-full max-w-md bg-flyon-card p-6 rounded-xl shadow-md space-y-4">
+            {% csrf_token %}
+
+            <!-- Тип задачи -->
+            <div class="flex flex-col">
+                <label for="type" class="label font-semibold text-gray-700 mb-2">Тип</label>
+                <select id="type" name="type" class="select input input-bordered w-full">
+                    <option value="train" selected>Training</option>
+                    <option value="val">Validation</option>
+                    <option value="test">Testing</option>
+                </select>
+            </div>
+
+            <!-- Изображения -->
+            <div class="flex flex-col">
+                <label for="images" class="label font-semibold text-gray-700 mb-2">Изображения</label>
+                <input id="images" type="file" name="images" accept="image/*" multiple class="input input-bordered w-full">
+            </div>
+
+            <!-- Кнопка отправки -->
+            <div class="flex justify-end">
+                <button type="submit" class="btn btn-primary w-full">Создать</button>
+            </div>
         </form>
     </main>
-
-
 {% endblock %}
