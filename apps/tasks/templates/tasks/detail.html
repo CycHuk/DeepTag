@@ -79,7 +79,10 @@
     <!-- Действия -->
     <div class="p-6 border-t border-base-200 flex flex-wrap gap-3">
         {% if not task.assigned_to %}
-        <button class="btn btn-primary btn-md flex-1 sm:flex-auto">Взять задачу</button>
+            <form action="{% url 'tasks:take' task.id %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-primary btn-md flex-1 sm:flex-auto">Взять задачу</button>
+            </form>
         {% endif %}
 
         <button class="btn btn-outline btn-md flex-1 sm:flex-auto">Разметить</button>
