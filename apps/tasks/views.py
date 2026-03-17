@@ -60,4 +60,20 @@ class TakeTaskView(View):
 
         return redirect('tasks:detail', pk=task.id)
 
+class CompleteTaskView(View):
+
+    def post(self, request, pk, *args, **kwargs):
+        task = get_object_or_404(Task, pk=pk)
+
+        if task.assigned_to != request.user:
+            return redirect('tasks:detail', pk=task.id)
+
+        if task.status == 'completed':
+            return redirect('tasks:detail', pk=task.id)
+
+        task.status = 'completed'
+        task.save()
+
+        return redirect('tasks:detail', pk=task.id)
+
 
