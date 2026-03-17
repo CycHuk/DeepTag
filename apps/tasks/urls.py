@@ -5,4 +5,5 @@ app_name = 'tasks'
 
 urlpatterns = [
     path('<uuid:pk>/', views.TaskDetailView.as_view(), name='detail'),
+    path('<uuid:pk>/delete/', views.TaskDeleteView.as_view(), name='delete'),
 ]

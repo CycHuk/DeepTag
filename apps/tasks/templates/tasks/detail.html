@@ -45,7 +45,7 @@
             <span class="text-sm text-base-content/60 font-medium">Задача № {{ task.id }}</span>
 
             {% if user.is_superuser %}
-            <form method="post" action="" onsubmit="return confirm('Вы уверены, что хотите удалить задачу?');">
+            <form method="post" action="{% url 'tasks:delete' task.id%}" onsubmit="return confirm('Вы уверены, что хотите удалить задачу?');">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-error btn-sm">Удалить</button>
             </form>

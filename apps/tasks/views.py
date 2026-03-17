@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, DeleteView
 
 from apps.projects.models import Project
 from apps.tasks.forms import TaskCreateForm
@@ -40,4 +40,11 @@ class TaskDetailView(DetailView):
     model = Task
     template_name = 'tasks/detail.html'
     context_object_name = 'task'
+
+class TaskDeleteView(DeleteView):
+    model = Task
+
+    def get_success_url(self):
+        return reverse_lazy('projects:detail', kwargs={'pk': self.object.project.pk})
+
 
