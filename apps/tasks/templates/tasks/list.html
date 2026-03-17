@@ -1,0 +1,51 @@
+<div class="mt-10">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <h2 class="text-2xl font-bold">Задачи</h2>
+        <a href="{% url 'projects:create_task' project.id %}" class="btn btn-primary">
+            + Создать задачу
+        </a>
+    </div>
+
+    <!-- Filters Card -->
+    <div class="card bg-base-100 border border-base-200 shadow-sm mb-6">
+        <div class="card-body p-4 flex flex-col md:flex-row gap-4 md:items-center">
+
+            <form
+                hx-get="{% url 'projects:detail' project.id %}"
+                hx-target="#task-list"
+                hx-push-url="true"
+                hx-trigger="change"
+                class="flex flex-col md:flex-row gap-4 w-full"
+            >
+
+                <select name="filter" class="select select-bordered w-full md:w-auto">
+                    <option value="">Все</option>
+                    <option value="free">Свободные</option>
+                    <option value="my">Мои</option>
+                    <option value="completed">Выполненные</option>
+                </select>
+
+                <select name="type" class="select select-bordered w-full md:w-auto">
+                    <option value="">Все типы</option>
+                    <option value="train">Training</option>
+                    <option value="val">Validation</option>
+                    <option value="test">Testing</option>
+                </select>
+
+                <select name="sort" class="select select-bordered w-full md:w-auto">
+                    <option value="desc">Новые</option>
+                    <option value="asc">Старые</option>
+                </select>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Task List -->
+    <div id="task-list" class="grid gap-4">
+        {% include 'tasks/task_cards.html' %}
+    </div>
+
+</div>
