@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include 'components/header.html' %}
+
+    <main class="container mx-auto max-w-5xl px-6 py-8">
+
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumbs mb-6" aria-label="Breadcrumb">
+            <ul class="flex text-sm text-base-content/70 gap-x-2 items-center">
+                <li>
+                    <a href="{% url 'projects:index' %}" class="hover:underline">Проекты</a>
+                </li>
+                <li class="breadcrumbs-separator rtl:rotate-180 flex items-center">
+                    <span class="icon-[tabler--chevron-right] w-4 h-4"></span>
+                </li>
+                <li>
+                    <a href="{% url 'projects:detail' task.project_id %}" class="hover:underline">{{ task.project.name }}</a>
+                </li>
+                <li class="breadcrumbs-separator rtl:rotate-180 flex items-center">
+                    <span class="icon-[tabler--chevron-right] w-4 h-4"></span>
+                </li>
+                <li aria-current="page" class="font-medium">Задача № {{ task.id }}</li>
+            </ul>
+        </nav>
+
+       <div class="card w-full bg-base-100 border border-base-200 rounded-2xl shadow-lg transition-all duration-300">
+
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-base-200 border-b border-base-200 gap-3">
+
+        <div class="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+            <span class="badge badge-outline text-lg font-semibold">{{ task.get_type_display }}</span>
+            <span class="badge text-lg font-semibold
+                {% if task.status == 'completed' %}badge-success
+                {% elif task.status == 'in_progress' %}badge-info
+                {% else %}badge-ghost
+                {% endif %}
+            ">
+                {{ task.get_status_display }}
+            </span>
+        </div>
+
+        <!-- Заголовок задачи + кнопка удалить -->
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-base-content/60 font-medium">Задача № {{ task.id }}</span>
+
+            {% if user.is_superuser %}
+            <form method="post" action="" onsubmit="return confirm('Вы уверены, что хотите удалить задачу?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-error btn-sm">Удалить</button>
+            </form>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="p-6 flex flex-col gap-4">
+
+        <div class="flex flex-col sm:flex-row justify-between gap-4 text-base-content/70">
+            <div class="flex items-center gap-2">
+                👤 Назначен:
+                {% if task.assigned_to %}
+                    {{ task.assigned_to.full_name }}
+                {% else %}
+                    <span class="badge badge-warning badge-sm">Свободна</span>
+                {% endif %}
+            </div>
+            <div class="flex items-center gap-2">
+                📅 Создано: {{ task.created_at|date:"d M Y H:i" }}
+            </div>
+            <div class="flex items-center gap-2">
+                🖼 Изображений: {{ task.images.count }}
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Действия -->
+    <div class="p-6 border-t border-base-200 flex flex-wrap gap-3">
+        {% if not task.assigned_to %}
+        <button class="btn btn-primary btn-md flex-1 sm:flex-auto">Взять задачу</button>
+        {% endif %}
+
+        <button class="btn btn-outline btn-md flex-1 sm:flex-auto">Разметить</button>
+
+        {% if task.assigned_to == user and task.status != 'completed' %}
+        <button class="btn btn-success btn-md flex-1 sm:flex-auto">Пометить как выполненную</button>
+        {% endif %}
+    </div>
+
+</div>
+    </main>
+{% endblock %}

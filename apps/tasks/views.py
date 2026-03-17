@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView
 
 from apps.projects.models import Project
 from apps.tasks.forms import TaskCreateForm
@@ -35,4 +35,9 @@ class TaskCreateView(CreateView):
                 Image.objects.create(task=self.object, file=img)
 
         return super().form_valid(form)
+
+class TaskDetailView(DetailView):
+    model = Task
+    template_name = 'tasks/detail.html'
+    context_object_name = 'task'
 
