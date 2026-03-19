@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
     {% include 'components/header.html' %}
@@ -79,26 +80,61 @@
             </div>
 
             <!-- Действия -->
-            <div class="p-6 border-t border-base-200 flex flex-wrap gap-3">
+            <div class="p-6 border-t border-base-200 flex flex-wrap gap-3 justify-center sm:justify-start">
+
                 {% if not task.assigned_to %}
-                    <form action="{% url 'tasks:take' task.id %}" method="post">
+                    <form action="{% url 'tasks:take' task.id %}" method="post" class="flex-1 sm:flex-auto">
                         {% csrf_token %}
-                        <button class="btn btn-primary btn-md flex-1 sm:flex-auto">Взять задачу</button>
+                        <button type="submit" class="btn btn-primary btn-md w-full">
+                            Взять задачу
+                        </button>
                     </form>
                 {% endif %}
 
-                <button class="btn btn-outline btn-md flex-1 sm:flex-auto">Разметить</button>
+                <button class="btn btn-outline btn-md flex-1 sm:flex-auto w-full">
+                    Разметить
+                </button>
 
                 {% if task.assigned_to == user and task.status != 'completed' %}
-                    <form method="post" action="{% url 'tasks:complete' task.id %}">
+                    <form method="post" action="{% url 'tasks:complete' task.id %}" class="flex-1 sm:flex-auto">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-md flex-1 sm:flex-auto">Пометить как
-                            выполненную
+                        <button type="submit" class="btn btn-success btn-md w-full">
+                            Пометить как выполненную
                         </button>
                     </form>
                 {% endif %}
             </div>
+        </div>
 
+        <div class="mt-6 p-6 border-t border-base-200 rounded-xl bg-base-100 shadow-sm flex flex-col gap-4">
+
+            <h3 class="text-lg font-semibold">Загрузить фотографии</h3>
+            <p class="text-sm text-base-content/70">Вы можете загрузить одну или несколько фотографий для этой
+                задачи.</p>
+
+            <form action="{% url 'tasks:add_images' task.id %}" method="post" enctype="multipart/form-data"
+                  class="flex flex-col gap-3">
+                {% csrf_token %}
+                <input id="file-upload" type="file" name="images" multiple class="input max-w-sm"
+                       aria-label="file-input" accept="image/*">
+                <button type="submit" class="btn btn-primary btn-md w-full" onclick="handleFormSubmit()">Загрузить
+                </button>
+                <div class="flex justify-end">
+                </div>
+            </form>
         </div>
     </main>
+    <div id="formToast" class="fixed bottom-4 right-4 hidden max-w-sm w-auto alert alert-primary shadow-lg">
+        <span class="loading loading-dots"></span> Фотографии загружаются
+    </div>
+    {% if messages %}
+        <div id="toast-container" class="fixed bottom-4 right-4 space-y-2 z-50">
+            {% for message in messages %}
+                <div class="toast-item alert alert-success shadow-lg max-w-sm w-auto">
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <script src="{% static 'tasks/task_add_image.js' %}"></script>
 {% endblock %}

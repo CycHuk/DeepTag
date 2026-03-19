@@ -10,3 +10,6 @@ class TaskCreateForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ['type']
+
+class TaskAddImageForm(forms.Form):
+    images = MultiImageField(required=False)

@@ -1,10 +1,11 @@
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, DetailView, DeleteView, UpdateView
+from django.views.generic import CreateView, DetailView, DeleteView, UpdateView, FormView
 
 from apps.projects.models import Project
-from apps.tasks.forms import TaskCreateForm
+from apps.tasks.forms import TaskCreateForm, TaskAddImageForm
 from apps.tasks.models import Task, Image
 
 
@@ -76,4 +77,18 @@ class CompleteTaskView(View):
 
         return redirect('tasks:detail', pk=task.id)
 
+class TaskAddImageView(View):
+    def post(self, request, pk, *args, **kwargs):
+        task = get_object_or_404(Task, pk=pk)
+        form = TaskAddImageForm(request.POST, request.FILES)
 
+        if not form.is_valid():
+            return redirect('tasks:detail', pk=task.id)
+
+        images = form.cleaned_data.get('images') or []
+
+        for img in images:
+            Image.objects.create(task=task, file=img)
+
+        messages.success(request,f'Успешно загружено {len(images)} изображений')
+        return redirect('tasks:detail', pk=task.id)
