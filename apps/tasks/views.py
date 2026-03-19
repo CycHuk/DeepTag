@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -42,6 +43,25 @@ class TaskDetailView(DetailView):
     model = Task
     template_name = 'tasks/detail.html'
     context_object_name = 'task'
+    paginate_by = 8
+
+    def get_template_names(self):
+        if self.request.headers.get('HX-Request'):
+            return ['tasks/image_list.html']
+        return [self.template_name]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        images = self.object.images.all()
+
+        paginator = Paginator(images, self.paginate_by)
+
+        page = self.request.GET.get('page')
+        page_obj = paginator.get_page(page)
+        context['page_obj'] = page_obj
+
+        return context
 
 class TaskDeleteView(DeleteView):
     model = Task
