@@ -9,4 +9,5 @@ urlpatterns = [
     path('<uuid:pk>/take/', views.TakeTaskView.as_view(), name='take'),
     path('<uuid:pk>/complete/', views.CompleteTaskView.as_view(), name='complete'),
     path('<uuid:pk>/images/add/', views.TaskAddImageView.as_view(), name='add_images'),
+    path('images/<uuid:pk>/delete/', views.ImageDeleteView.as_view(), name='image-delete'),
 ]

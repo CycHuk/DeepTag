@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, DeleteView, UpdateView, FormView
@@ -112,3 +113,19 @@ class TaskAddImageView(View):
 
         messages.success(request,f'Успешно загружено {len(images)} изображений')
         return redirect('tasks:detail', pk=task.id)
+
+class ImageDeleteView(View):
+    paginate_by = 8
+    def post(self, request, pk, *args, **kwargs):
+        image = get_object_or_404(Image, pk=pk)
+        task = image.task
+        image.delete()
+
+        images = task.images.all()
+
+        paginator = Paginator(images, self.paginate_by)
+
+        page = self.request.GET.get('page')
+        page_obj = paginator.get_page(page)
+
+        return render(request, 'tasks/image_list.html', {'page_obj': page_obj})
