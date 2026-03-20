@@ -8,8 +8,14 @@ from apps.tasks.models import Task
 
 class TaskAnnotationView(DetailView):
     template_name = 'annotations/main.html'
+    context_object_name = 'task'
     model = Task
     paginate_by = 1
+
+    def get_template_names(self):
+        if self.request.headers.get('HX-Request'):
+            return ['annotations/update.html']
+        return ['annotations/main.html']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -27,9 +33,14 @@ class TaskAnnotationView(DetailView):
 
         context.update({
             'page': page,
-            'image_obj': image,
+            'image': image,
             'labels': self.object.project.labels.all(),
             'annotations': Annotation.objects.filter(image=image)
         })
 
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)

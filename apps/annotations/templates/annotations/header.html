@@ -1,0 +1,42 @@
+<nav class="flex items-center gap-x-1">
+    <!-- Previous -->
+    {% if page.has_previous %}
+        <button
+                type="button"
+                class="btn btn-text btn-square"
+                hx-post="{% url 'tasks:annotation' task.pk %}?image={{ page.previous_page_number }}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-push-url="true"
+                hx-swap="none">
+            <span class="icon-[tabler--chevron-left] size-5 rtl:rotate-180"></span>
+        </button>
+    {% else %}
+        <button type="button" class="btn btn-text btn-square" disabled>
+            <span class="icon-[tabler--chevron-left] size-5 rtl:rotate-180"></span>
+        </button>
+    {% endif %}
+
+    <!-- Page info -->
+    <div class="flex items-center gap-x-1">
+        <span class="btn btn-text btn-square pointer-events-none" aria-current="page">{{ page.number }}</span>
+        <span class="text-base-content/80 mx-3">из</span>
+        <span class="btn btn-text btn-square pointer-events-none">{{ page.paginator.num_pages }}</span>
+    </div>
+
+    <!-- Next -->
+    {% if page.has_next %}
+        <button
+                type="button"
+                class="btn btn-text btn-square"
+                hx-post="{% url 'tasks:annotation' task.pk %}?image={{ page.next_page_number }}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-push-url="true"
+                hx-swap="none">
+            <span class="icon-[tabler--chevron-right] size-5 rtl:rotate-180"></span>
+        </button>
+    {% else %}
+        <button type="button" class="btn btn-text btn-square" disabled>
+            <span class="icon-[tabler--chevron-right] size-5 rtl:rotate-180"></span>
+        </button>
+    {% endif %}
+</nav>

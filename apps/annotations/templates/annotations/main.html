@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<header id="header" class="flex justify-center">
+    {% include 'annotations/header.html' %}
+</header>
+<main class="flex gap-4">
+    <div id="leftbar" class="flex-shrink-0 m-4">
+        {% include 'annotations/leftbar.html' %}
+    </div>
 
-<script src="https://unpkg.com/konva@10/konva.min.js"></script>
+    <div id="annotation" class="flex-1 min-w-0">
+        {% include 'annotations/annotation.html' %}
+    </div>
+</main>
 {% endblock %}
