@@ -91,9 +91,9 @@
                     </form>
                 {% endif %}
 
-                <button class="btn btn-outline btn-md flex-1 sm:flex-auto w-full">
+                <a href="{% url 'tasks:annotation' task.id %}" class="btn btn-outline btn-md flex-1 sm:flex-auto w-full">
                     Разметить
-                </button>
+                </a>
 
                 {% if task.assigned_to == user and task.status != 'completed' %}
                     <form method="post" action="{% url 'tasks:complete' task.id %}" class="flex-1 sm:flex-auto">
