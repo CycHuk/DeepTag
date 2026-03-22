@@ -1,3 +1,18 @@
-<div class="absolute top-1/2 left-4 -translate-y-1/2 origin-left -rotate-90 bg-gray-100 px-2 py-1 rounded shadow">
-    Тут будут инструменты
+<div class="flex flex-col items-center h-screen border-r border-base-content/20 gap-2">
+    <div class="p-2 flex flex-col gap-2 border-b border-base-content/20">
+        <label class="cursor-pointer rounded-md hover:bg-base-200 transition-colors duration-200">
+            <input type="radio" name="tool" class="hidden peer" checked/>
+            <span class="icon-[solar--cursor-outline] size-8 text-base-content peer-checked:text-primary-content peer-checked:bg-primary rounded-md p-2 transition-colors duration-200"></span>
+        </label>
+
+        <label class="cursor-pointer rounded-md hover:bg-base-200 transition-colors duration-200">
+            <input type="radio" name="tool" class="hidden peer"/>
+            <span class="icon-[proicons--tag-add] size-8 text-base-content peer-checked:text-primary-content peer-checked:bg-primary rounded-md p-2 transition-colors duration-200"></span>
+        </label>
+
+        <label class="cursor-pointer rounded-md hover:bg-base-200 transition-colors duration-200">
+            <input type="radio" name="tool" class="hidden peer"/>
+            <span class="icon-[lucide--square-pen] size-8 text-base-content peer-checked:text-primary-content peer-checked:bg-primary rounded-md p-2 transition-colors duration-200"></span>
+        </label>
+    </div>
 </div>
