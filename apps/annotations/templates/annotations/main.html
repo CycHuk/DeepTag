@@ -1,16 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<header id="header" class="flex justify-center">
-    {% include 'annotations/header.html' %}
-</header>
-<main class="flex gap-4">
-    <div id="leftbar">
-        {% include 'annotations/leftbar.html' %}
-    </div>
+<div class="h-screen flex flex-col">
+    <header id="header" class="flex justify-center shrink-0">
+        {% include 'annotations/header.html' %}
+    </header>
 
-    <div id="annotation" class="flex-1">
-        {% include 'annotations/annotation.html' %}
-    </div>
-</main>
+    <main class="flex flex-1 overflow-hidden">
+        <div id="leftbar" class="overflow-auto max-h-full">
+            {% include 'annotations/leftbar.html' %}
+        </div>
+
+        <div id="annotation" class="flex-1 overflow-auto max-h-full">
+            {% include 'annotations/annotation.html' %}
+        </div>
+    </main>
+</div>
 {% endblock %}
