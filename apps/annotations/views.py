@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import redirect
 from django.views.generic import DetailView
 
+from apps.annotations.forms import AnnotationFormSet
 from apps.annotations.models import Annotation
 from apps.tasks.models import Task
 
@@ -31,11 +32,16 @@ class TaskAnnotationView(DetailView):
 
         image = page.object_list[0]
 
+        if self.request.method == 'POST':
+            formset = AnnotationFormSet(self.request.POST, instance=image)
+        else:
+            formset = AnnotationFormSet(instance=image)
+
         context.update({
             'page': page,
             'image': image,
             'labels': self.object.project.labels.all(),
-            'annotations': Annotation.objects.filter(image=image)
+            'formset': formset,
         })
 
         return context

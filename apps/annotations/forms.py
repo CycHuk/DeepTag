@@ -1,6 +1,7 @@
 from django import forms
 
 from apps.annotations.models import Annotation
+from apps.tasks.models import Image
 
 
 class AnnotationForm(forms.ModelForm):
@@ -28,3 +29,11 @@ class AnnotationForm(forms.ModelForm):
                 raise forms.ValidationError("Все числа BBox должны быть в диапазоне от 0 до 1.")
 
         return bbox
+
+AnnotationFormSet = forms.inlineformset_factory(
+    parent_model=Image,
+    model=Annotation,
+    form=AnnotationForm,
+    extra=0,
+    can_delete=True,
+)
