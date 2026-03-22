@@ -1,1 +1,13 @@
-<img src="{{ image.file.url }}">
+<div class="flex h-full">
+  <div id="canvas_div" class="flex-1 flex items-center justify-center">
+      <img src="{{ image.file.url }}" class="hidden" alt="{{ image.id }}">
+     <canvas id="container"></canvas>
+  </div>
+
+  <div id="annotation_list" class="max-w-lg p-2 border-l border-base-content/20">
+      {% include 'annotations/annotation_list.html' %}
+  </div>
+</div>
+
+
+

@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<script src="https://unpkg.com/konva@10/konva.min.js"></script>
 <div class="h-screen flex flex-col">
-    <header id="header" class="flex justify-center shrink-0">
+    <header id="header" class="flex justify-center shrink-0 border-b border-base-content/20 w-full">
         {% include 'annotations/header.html' %}
     </header>
 
