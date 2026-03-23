@@ -1,3 +1,5 @@
+import json
+
 from django.core.paginator import Paginator
 from django.shortcuts import redirect
 from django.views.generic import DetailView
@@ -34,11 +36,22 @@ class TaskAnnotationView(DetailView):
 
         formset = AnnotationFormSet(instance=image)
 
+        formset_data = [
+            {
+                **(form.cleaned_data if form.is_valid() else {f.name: f.value() for f in form}),
+                "DELETE": False if (form.cleaned_data.get("DELETE") if form.is_valid() else form[
+                    "DELETE"].value()) is None else (
+                    form.cleaned_data.get("DELETE") if form.is_valid() else form["DELETE"].value())
+            }
+            for form in formset
+        ]
+
         context.update({
             'page': page,
             'image': image,
-            'labels': self.object.project.labels.all(),
+            'labels': list(self.object.project.labels.values('id', 'name', 'color')),
             'formset': formset,
+            'formset_data': formset_data,
         })
 
         return context

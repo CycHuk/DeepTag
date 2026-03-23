@@ -2,7 +2,6 @@
     {% csrf_token %}
     {{ formset.management_form }}
 
-
     <!-- header -->
     <div class="pb-2">
         <div class="flex items-center justify-between">
@@ -14,13 +13,8 @@
     </div>
 
     <!-- список аннотаций -->
-    <div class="flex flex-col gap-2">
-        {% for form in formset %}
-            {% include 'annotations/annotation_card.html' %}
-        {% empty %}
-            <div class="text-sm opacity-60 text-center py-4">
-                Нет аннотаций
-            </div>
-        {% endfor %}
+    <div class="flex flex-col gap-2" id="formset-annotations-list">
     </div>
+
+    {{ formset_data|json_script:"formset-data" }}
 </form>

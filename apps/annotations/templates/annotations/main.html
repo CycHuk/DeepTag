@@ -17,6 +17,7 @@
         </div>
     </main>
 </div>
-<script src="https://unpkg.com/konva@10/konva.min.js"></script>
+{{ labels|json_script:"labels-data" }}
+<script src="{% static 'js/konva.js' %}"></script>
 <script type="module" src="{% static 'annotations/main.js' %}"></script>
 {% endblock %}
