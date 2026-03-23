@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<script src="https://unpkg.com/konva@10/konva.min.js"></script>
 <div class="h-screen flex flex-col">
     <header id="header" class="flex justify-center shrink-0 border-b border-base-content/20 w-full">
         {% include 'annotations/header.html' %}
@@ -17,4 +17,6 @@
         </div>
     </main>
 </div>
+<script src="https://unpkg.com/konva@10/konva.min.js"></script>
+<script type="module" src="{% static 'annotations/main.js' %}"></script>
 {% endblock %}

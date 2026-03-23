@@ -1,13 +1,10 @@
 <div class="flex h-full">
-  <div id="canvas_div" class="flex-1 flex items-center justify-center">
-      <img src="{{ image.file.url }}" class="hidden" alt="{{ image.id }}">
-     <canvas id="container"></canvas>
-  </div>
+    <img id="image" src="{{ image.file.url }}" class="hidden" alt="{{ image.id }}">
 
-  <div id="annotation_list" class="w-xs p-2 border-l border-base-content/20">
-      {% include 'annotations/annotation_list.html' %}
-  </div>
+    <div id="container" class="flex-1 flex items-center justify-center min-w-0">
+    </div>
+
+    <div id="annotation_list" class="w-xs p-2 border-l border-base-content/20 flex-shrink-0 overflow-auto">
+        {% include 'annotations/annotation_list.html' %}
+    </div>
 </div>
-
-
-

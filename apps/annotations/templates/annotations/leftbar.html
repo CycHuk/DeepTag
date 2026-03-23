@@ -24,7 +24,7 @@
             </button>
             <div class="dropdown-menu dropdown-open:opacity-100 hidden" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-transportation">
                 {% for label in labels %}
-                    <div class="dropdown-item gap-4 items-center">
+                    <div class="dropdown-item gap-4 items-center flex justify-between">
                         <input id="dropdown-radio-{{ label.id }}" name="label" value="{{ label.id }}" type="radio" class="radio radio-primary" {% if forloop.first %}checked{% endif %}/>
                         <label for="dropdown-radio-{{ label.id }}" class="label-text text-base-content block text-sm font-semibold">{{ label.name }}</label>
                         <span class="w-4 h-4 rounded-full" style="background-color: {{ label.color }};"></span>
