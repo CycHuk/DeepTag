@@ -160,8 +160,8 @@ function createAnnotationRect(bbox, label) {
     height: absY2 - absY1,
     fill: hexToRgba(label.color, 0.25),
     stroke: label.color,
-    strokeWidth: 3,
-    strokeScaleEnabled: false
+    strokeWidth: 2,
+    strokeScaleEnabled: true
   });
 }
 
@@ -175,6 +175,8 @@ function drawAnnotations(annotationData, annotationLayer) {
 
     const rect = createAnnotationRect(item.bbox, label);
     annotationLayer.add(rect);
+
+    item._rect = rect;
   }
 
   annotationLayer.draw();
@@ -201,6 +203,7 @@ let startY = 0;
 
 annotationLayer.on('mousedown touchstart', (e) => {
   if (e.evt.button !== 0) return;
+  if (selectedTool !== 'create') return;
   console.log('Начали рисовать по изображению!');
 
   isDrawing = true;
@@ -218,13 +221,14 @@ annotationLayer.on('mousedown touchstart', (e) => {
     stroke: label.color,
     strokeWidth: 2,
     dash: [4, 2],
-    strokeScaleEnabled: false
+    strokeScaleEnabled: true
   });
 
   annotationLayer.add(newRect);
 });
 
 annotationLayer.on('mousemove touchmove', (e) => {
+  if (selectedTool !== 'create') return;
   if (e.evt.button !== 0) return;
   if (!isDrawing || !newRect) return;
 
@@ -237,6 +241,7 @@ annotationLayer.on('mousemove touchmove', (e) => {
 });
 
 annotationLayer.on('mouseup touchend', (e) => {
+  if (selectedTool !== 'create') return;
   if (e.evt.button !== 0) return;
   if (!isDrawing) return;
 
@@ -260,6 +265,7 @@ annotationLayer.on('mouseup touchend', (e) => {
     label: label.id,
     bbox: bbox,
     DELETE: false,
+    _rect: rect
   });
 
   newRect = null;
