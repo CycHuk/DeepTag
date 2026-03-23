@@ -1,3 +1,26 @@
-<div class="w-xl">
-    Тут будет форма c классами
-</div>
+<form id="annotation_formset" method="post" class="w-full max-w-2xl mx-auto">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+
+    <!-- header -->
+    <div class="pb-2">
+        <div class="flex items-center justify-between">
+            <h2 class="card-title text-lg">
+                Аннотации
+            </h2>
+
+        </div>
+    </div>
+
+    <!-- список аннотаций -->
+    <div class="flex flex-col gap-2">
+        {% for form in formset %}
+            {% include 'annotations/annotation_card.html' %}
+        {% empty %}
+            <div class="text-sm opacity-60 text-center py-4">
+                Нет аннотаций
+            </div>
+        {% endfor %}
+    </div>
+</form>

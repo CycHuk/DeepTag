@@ -1,0 +1,48 @@
+<div
+    class="flex items-center gap-3 p-2 rounded-lg border bg-base-100 shadow-sm"
+    id="annotations-{{ forloop.counter0 }}"
+>
+
+    <!-- hidden -->
+    <input type="hidden" name="{{ form.id.name }}" id="{{ form.id.id_for_label }}" value="{{ form.id.value|default_if_none:'' }}">
+    <input type="hidden" name="{{ form.bbox.name }}" id="{{ form.bbox.id_for_label }}" value="{{ form.bbox.value|default_if_none:'' }}">
+
+    <!-- label + select -->
+    <span class="text-sm opacity-70">Класс:</span>
+
+    <select
+        name="{{ form.label.name }}"
+        id="{{ form.label.id_for_label }}"
+        class="select select-bordered select-sm w-40"
+    >
+        {% for label in labels %}
+            <option value="{{ label.id }}"
+                {% if form.label.value|stringformat:"s" == label.id|stringformat:"s" %}
+                    selected
+                {% endif %}
+            >
+                {{ label.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <!-- spacer -->
+    <div class="flex-1"></div>
+
+    <!-- delete -->
+    <label
+    for="{{ form.DELETE.id_for_label }}"
+    class="btn btn-error btn-sm btn-circle flex items-center justify-center tooltip tooltip-left"
+    data-tip="Удалить"
+>
+    🗑️
+</label>
+
+    <input
+        type="checkbox"
+        name="{{ form.DELETE.name }}"
+        id="{{ form.DELETE.id_for_label }}"
+        class="hidden"
+        {% if form.DELETE.value %}checked{% endif %}
+    >
+</div>

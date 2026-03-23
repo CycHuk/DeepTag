@@ -12,7 +12,7 @@ class Annotation(models.Model):
     image = models.ForeignKey(Image, related_name='annotations', on_delete=models.CASCADE)
     label = models.ForeignKey(Label, related_name='annotations', on_delete=models.CASCADE)
 
-    bbox = models.JSONField()
+    bbox = models.TextField(max_length=30)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
