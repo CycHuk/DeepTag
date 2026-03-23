@@ -137,6 +137,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     BASE_DIR / "apps" / "projects" / "static",
     BASE_DIR / "apps" / "tasks" / "static",
+    BASE_DIR / "apps" / "annotations" / "static",
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
