@@ -32,10 +32,7 @@ class TaskAnnotationView(DetailView):
 
         image = page.object_list[0]
 
-        if self.request.method == 'POST':
-            formset = AnnotationFormSet(self.request.POST, instance=image)
-        else:
-            formset = AnnotationFormSet(instance=image)
+        formset = AnnotationFormSet(instance=image)
 
         context.update({
             'page': page,
