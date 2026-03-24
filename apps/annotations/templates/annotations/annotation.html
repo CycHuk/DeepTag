@@ -5,6 +5,7 @@
     </div>
 
     {{ formset_data|json_script:"formset-data" }}
+    <input type="hidden" id="image_id" value="{{ image.id }}">
 
     <div id="annotation_edit" class="fixed bottom-4 right-4 rounded-lg bg-base-200 p-4 shadow-lg flex items-center gap-2 hidden flyon-theme-primary">
         <label for="edit-label" class="text-content font-medium">Класс:</label>

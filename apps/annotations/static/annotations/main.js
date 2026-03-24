@@ -396,3 +396,18 @@ stage.on('mouseup', () => {
     newRect = null;
     annotationLayer.draw();
 });
+
+document.body.addEventListener('htmx:configRequest', function(evt) {
+    evt.detail.parameters['annotations-TOTAL_FORMS'] = annotationData.length;
+    evt.detail.parameters['annotations-INITIAL_FORMS'] = annotationData.filter(a => a.id !== undefined).length;
+    evt.detail.parameters['image_id'] = document.getElementById('image_id').value;
+
+    annotationData.forEach((item, index) => {
+        if (item.id !== undefined) {
+            evt.detail.parameters[`annotations-${index}-id`] = item.id;
+        }
+        evt.detail.parameters[`annotations-${index}-label`] = item.label;
+        evt.detail.parameters[`annotations-${index}-bbox`] = item.bbox;
+        evt.detail.parameters[`annotations-${index}-DELETE`] = item.DELETE ? 'on' : '';
+    });
+});

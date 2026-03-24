@@ -59,4 +59,22 @@ class TaskAnnotationView(DetailView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         context = self.get_context_data(**kwargs)
+
+        image_id = request.POST.get('image_id')
+        if not image_id:
+            context['message'] = "Ошибка: не удалось сохранить изменения."
+            return self.render_to_response(context)
+
+        image = self.object.images.filter(id=image_id).first()
+        if not image:
+            context['message'] = "Ошибка: не удалось сохранить изменения."
+            return self.render_to_response(context)
+
+        formset = AnnotationFormSet(request.POST, instance=image)
+        if formset.is_valid():
+            formset.save()
+        else:
+            context['message'] = "Ошибка: не удалось сохранить изменения."
+
+
         return self.render_to_response(context)
