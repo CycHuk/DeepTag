@@ -89,14 +89,18 @@ stage.add(transformerLayer);
 // Transformer
 const transformer = new Konva.Transformer({
     rotateEnabled: false,
-    enabledAnchors: ['top-left','top-right','bottom-left','bottom-right']
+    enabledAnchors: [
+        'top-left', 'top-center', 'top-right',
+        'middle-left', 'middle-right',
+        'bottom-left', 'bottom-center', 'bottom-right'
+    ],
 });
 
 transformerLayer.add(transformer);
 
 let activeRect = null;
 
-// Image
+// IMAGE
 const imageObj = new Image();
 imageObj.src = document.getElementById('image').src;
 
@@ -159,7 +163,70 @@ function createAnnotationRect(bbox, label) {
         }
     });
 
+    // События трансформации
+    rect.on('transformend', () => {
+        if (selectedTool === 'edit') {
+            rect.width(rect.width() * rect.scaleX());
+            rect.height(rect.height() * rect.scaleY());
+            rect.scaleX(1);
+            rect.scaleY(1);
+
+            const bbox = getRectBBox(rect);
+            applyBBoxToRect(rect, bbox)
+            const annItem = annotationData.find(item => item._rect === rect);
+            if (annItem) annItem.bbox = bbox;
+
+            annotationLayer.draw();
+        }
+    });
+
+    rect.on('dragend', (e) => {
+    if (selectedTool === 'edit' && e.evt.button === 2) {
+        const bbox = getRectBBox(rect);
+
+        applyBBoxToRect(rect, bbox);
+
+        const annItem = annotationData.find(item => item._rect === rect);
+        if (annItem) annItem.bbox = bbox;
+
+        annotationLayer.draw();
+    }
+});
+
     return rect;
+}
+
+function applyBBoxToRect(rect, bbox) {
+    // bbox — строка вида "x1 y1 x2 y2"
+    const [x1, y1, x2, y2] = bbox.split(' ').map(Number);
+
+    // Преобразуем в абсолютные координаты относительно изображения
+    const absX = konvaImage.x() + x1 * konvaImage.width();
+    const absY = konvaImage.y() + y1 * konvaImage.height();
+    const absWidth = (x2 - x1) * konvaImage.width();
+    const absHeight = (y2 - y1) * konvaImage.height();
+
+    // Применяем к прямоугольнику
+    rect.position({ x: absX, y: absY });
+    rect.size({ width: absWidth, height: absHeight });
+    rect.scaleX(1);
+    rect.scaleY(1);
+
+    annotationLayer.draw();
+}
+
+function getRectBBox(rect) {
+    const x1 = rect.x();
+    const y1 = rect.y();
+    const x2 = x1 + rect.width();
+    const y2 = y1 + rect.height();
+
+    const nx1 = Math.max(0, Math.min(1, (x1 - konvaImage.x()) / konvaImage.width()));
+    const ny1 = Math.max(0, Math.min(1, (y1 - konvaImage.y()) / konvaImage.height()));
+    const nx2 = Math.max(0, Math.min(1, (x2 - konvaImage.x()) / konvaImage.width()));
+    const ny2 = Math.max(0, Math.min(1, (y2 - konvaImage.y()) / konvaImage.height()));
+
+    return [nx1, ny1, nx2, ny2].map(v => Math.round(v * 100) / 100).join(' ');
 }
 
 function drawAnnotations(data) {
