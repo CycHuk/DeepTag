@@ -103,25 +103,6 @@ imageObj.onload = () => {
 
     drawAnnotations(annotationData, annotationLayer);
 
-    const scale = 1.2;
-    const newWidth = konvaImage.width() * scale;
-    const newHeight = konvaImage.height() * scale;
-
-    const newX = konvaImage.x() - (newWidth - konvaImage.width()) / 2;
-    const newY = konvaImage.y() - (newHeight - konvaImage.height()) / 2;
-
-    const hitRect = new Konva.Rect({
-      x: newX,
-      y: newY,
-      width: newWidth,
-      height: newHeight,
-      fill: 'transparent',
-      stroke: 'transparent',
-      listening: true
-    });
-
-    annotationLayer.add(hitRect);
-    annotationLayer.batchDraw();
 };
 
 // Annotation Data
@@ -134,6 +115,17 @@ const formsetAnnotationsList = document.getElementById('formset-annotations-list
 // Annotation Layer
 const annotationLayer = new Konva.Layer();
 stage.add(annotationLayer);
+
+const transformer = new Konva.Transformer({
+  rotateEnabled: false,
+  keepRatio: false,
+  enabledAnchors: ['top-left','top-right','bottom-left','bottom-right'],
+  anchorStroke: 'black',
+  anchorFill: 'white',
+  anchorSize: 8
+});
+
+annotationLayer.add(transformer);
 
 function hexToRgba(hex, alpha = 0.25) {
   hex = hex.replace('#', '');
@@ -153,7 +145,7 @@ function createAnnotationRect(bbox, label) {
   const absX2 = konvaImage.x() + x2 * konvaImage.width();
   const absY2 = konvaImage.y() + y2 * konvaImage.height();
 
-  return new Konva.Rect({
+  const rect = new Konva.Rect({
     x: absX1,
     y: absY1,
     width: absX2 - absX1,
@@ -163,11 +155,14 @@ function createAnnotationRect(bbox, label) {
     strokeWidth: 2,
     strokeScaleEnabled: true
   });
+
+  transformer.nodes([rect]);
+  annotationLayer.draw();
+
+  return rect
 }
 
 function drawAnnotations(annotationData, annotationLayer) {
-  annotationLayer.destroyChildren();
-
   for (const item of annotationData) {
     if (item.DELETE) continue;
 
@@ -201,7 +196,7 @@ let newRect = null;
 let startX = 0;
 let startY = 0;
 
-annotationLayer.on('mousedown touchstart', (e) => {
+stage.on('mousedown touchstart', (e) => {
   if (e.evt.button !== 0) return;
   if (selectedTool !== 'create') return;
   console.log('Начали рисовать по изображению!');
@@ -227,7 +222,7 @@ annotationLayer.on('mousedown touchstart', (e) => {
   annotationLayer.add(newRect);
 });
 
-annotationLayer.on('mousemove touchmove', (e) => {
+stage.on('mousemove touchmove', (e) => {
   if (selectedTool !== 'create') return;
   if (e.evt.button !== 0) return;
   if (!isDrawing || !newRect) return;
@@ -240,7 +235,7 @@ annotationLayer.on('mousemove touchmove', (e) => {
   annotationLayer.batchDraw();
 });
 
-annotationLayer.on('mouseup touchend', (e) => {
+stage.on('mouseup touchend', (e) => {
   if (selectedTool !== 'create') return;
   if (e.evt.button !== 0) return;
   if (!isDrawing) return;
