@@ -10,6 +10,7 @@ document.addEventListener('change', (e) => {
             if (activeRect) activeRect.draggable(false);
             activeRect = null;
             transformerLayer.draw();
+            annotationEdit.classList.add('hidden');
         }
     }
 });
@@ -117,7 +118,7 @@ imageObj.onload = () => {
 };
 
 // Data
-const annotationData = JSON.parse(document.getElementById('formset-data').textContent);
+export const annotationData = JSON.parse(document.getElementById('formset-data').textContent);
 
 // Utils
 function hexToRgba(hex, alpha = 0.25) {
@@ -142,7 +143,7 @@ function createAnnotationRect(bbox, label) {
         draggable: false
     });
 
-    // ✅ ДВОЙНОЙ КЛИК ТОЛЬКО В EDIT
+    // Двойной клик только в edit
     rect.on('dblclick dbltap', () => {
         if (selectedTool !== 'edit') return;
 
@@ -154,6 +155,7 @@ function createAnnotationRect(bbox, label) {
             rect.draggable(false);
             activeRect = null;
             transformerLayer.draw();
+            annotationEdit.classList.add('hidden');
         }
     });
 
@@ -172,6 +174,19 @@ function drawAnnotations(data) {
     annotationLayer.draw();
 }
 
+// Annotation edit elements
+const annotationEdit = document.getElementById('annotation_edit');
+const editLabelSelect = document.getElementById('edit-label');
+const deleteRectBtn = document.getElementById('delete-rect');
+
+// Заполняем select
+labels.forEach(label => {
+    const option = document.createElement('option');
+    option.value = label.id;
+    option.textContent = label.name;
+    editLabelSelect.appendChild(option);
+});
+
 // SELECT RECT
 annotationLayer.on('click tap', (e) => {
     if (selectedTool !== 'edit') return;
@@ -184,6 +199,13 @@ annotationLayer.on('click tap', (e) => {
 
     transformer.nodes([activeRect]);
     transformerLayer.draw();
+
+    // Показ блока редактирования
+    annotationEdit.classList.remove('hidden');
+
+    // Подставляем текущий label
+    const annItem = annotationData.find(item => item._rect === activeRect);
+    if (annItem) editLabelSelect.value = annItem.label;
 });
 
 // CLICK OUTSIDE
@@ -192,12 +214,38 @@ stage.on('click tap', (e) => {
 
     if (!(e.target instanceof Konva.Rect)) {
         transformer.nodes([]);
-
         if (activeRect) activeRect.draggable(false);
-
         activeRect = null;
         transformerLayer.draw();
+        annotationEdit.classList.add('hidden');
     }
+});
+
+// Изменение label через select
+editLabelSelect.addEventListener('change', () => {
+    if (!activeRect) return;
+    const newLabelId = editLabelSelect.value;
+    const label = getLabel(newLabelId);
+
+    activeRect.fill(hexToRgba(label.color));
+    activeRect.stroke(label.color);
+    annotationLayer.draw();
+
+    const annItem = annotationData.find(item => item._rect === activeRect);
+    if (annItem) annItem.label = newLabelId;
+});
+
+// Удаление rect
+deleteRectBtn.addEventListener('click', () => {
+    if (!activeRect) return;
+    const annItem = annotationData.find(item => item._rect === activeRect);
+    if (annItem) annItem.DELETE = true;
+
+    activeRect.visible(false);
+    transformer.nodes([]);
+    activeRect = null;
+    annotationEdit.classList.add('hidden');
+    annotationLayer.draw();
 });
 
 // Drawing helpers
