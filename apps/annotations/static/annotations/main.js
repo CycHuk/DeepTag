@@ -1,20 +1,22 @@
 // Tool
 let selectedTool = document.querySelector('input[name="tool"]:checked').value;
-console.log('Выбранный инструмент:', selectedTool);
 
 document.addEventListener('change', (e) => {
     if (e.target.name === 'tool') {
-        selectedTool = e.target.value
-        console.log('Выбран новый инструмент:', selectedTool);
+        selectedTool = e.target.value;
+
+        if (selectedTool !== 'edit') {
+            transformer.nodes([]);
+            if (activeRect) activeRect.draggable(false);
+            activeRect = null;
+            transformerLayer.draw();
+        }
     }
 });
 
 // Labels
 const labels = JSON.parse(document.getElementById('labels-data').textContent);
-console.log('Список классов:', labels);
 let selectedLabel = document.querySelector('input[name="label"]:checked').value;
-
-console.log('ID:', selectedLabel);
 
 function getLabel(id) {
     return labels.find(label => label.id === id);
@@ -22,14 +24,13 @@ function getLabel(id) {
 
 document.addEventListener('change', (e) => {
     if (e.target.name === 'label') {
-        selectedLabel = e.target.value
-        console.log('Выбран класс:', selectedLabel, getLabel(selectedLabel));
+        selectedLabel = e.target.value;
     }
 });
 
 // Konva
 Konva.dragButtons = [2];
-const container = document.getElementById('container')
+const container = document.getElementById('container');
 
 const stage = new Konva.Stage({
     container: 'container',
@@ -38,57 +39,68 @@ const stage = new Konva.Stage({
     draggable: true
 });
 
-stage.on('contextmenu', (e) => {
-  e.evt.preventDefault();
-});
+stage.on('contextmenu', (e) => e.evt.preventDefault());
 
 // Resize
-const resizeObserver = new ResizeObserver(entries => {
+new ResizeObserver(entries => {
     for (let entry of entries) {
-        const {width, height} = entry.contentRect;
-
-        stage.width(width);
-        stage.height(height);
+        stage.width(entry.contentRect.width);
+        stage.height(entry.contentRect.height);
     }
-});
+}).observe(container);
 
-resizeObserver.observe(container);
-
-// Scale
+// Zoom
 const scaleBy = 1.05;
 
 stage.on('wheel', (e) => {
-  e.evt.preventDefault();
+    e.evt.preventDefault();
 
-  const oldScale = stage.scaleX();
-  const pointer = stage.getPointerPosition();
+    const oldScale = stage.scaleX();
+    const pointer = stage.getPointerPosition();
 
-  const mousePointTo = {
-    x: (pointer.x - stage.x()) / oldScale,
-    y: (pointer.y - stage.y()) / oldScale
-  };
+    const mousePointTo = {
+        x: (pointer.x - stage.x()) / oldScale,
+        y: (pointer.y - stage.y()) / oldScale
+    };
 
-  const direction = e.evt.deltaY > 0 ? -1 : 1;
-  const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    const direction = e.evt.deltaY > 0 ? -1 : 1;
+    const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-  stage.scale({ x: newScale, y: newScale });
+    stage.scale({ x: newScale, y: newScale });
 
-  const newPos = {
-    x: pointer.x - mousePointTo.x * newScale,
-    y: pointer.y - mousePointTo.y * newScale
-  };
-  stage.position(newPos);
-  stage.batchDraw();
+    stage.position({
+        x: pointer.x - mousePointTo.x * newScale,
+        y: pointer.y - mousePointTo.y * newScale
+    });
+
+    stage.batchDraw();
 });
 
-// Image Layer
+// Layers
 const imageLayer = new Konva.Layer();
-stage.add(imageLayer)
+const annotationLayer = new Konva.Layer();
+const transformerLayer = new Konva.Layer();
 
+stage.add(imageLayer);
+stage.add(annotationLayer);
+stage.add(transformerLayer);
+
+// Transformer
+const transformer = new Konva.Transformer({
+    rotateEnabled: false,
+    enabledAnchors: ['top-left','top-right','bottom-left','bottom-right']
+});
+
+transformerLayer.add(transformer);
+
+let activeRect = null;
+
+// Image
 const imageObj = new Image();
 imageObj.src = document.getElementById('image').src;
 
 let konvaImage;
+
 imageObj.onload = () => {
     konvaImage = new Konva.Image({
         x: (stage.width() - imageObj.width) / 2,
@@ -101,169 +113,171 @@ imageObj.onload = () => {
     imageLayer.add(konvaImage);
     imageLayer.draw();
 
-    drawAnnotations(annotationData, annotationLayer);
-
+    drawAnnotations(annotationData);
 };
 
-// Annotation Data
+// Data
 const annotationData = JSON.parse(document.getElementById('formset-data').textContent);
-const annotationsTotalForms = document.getElementById('id_annotations-TOTAL_FORMS');
-console.log(annotationsTotalForms.value);
 
-const formsetAnnotationsList = document.getElementById('formset-annotations-list');
-
-// Annotation Layer
-const annotationLayer = new Konva.Layer();
-stage.add(annotationLayer);
-
-const transformer = new Konva.Transformer({
-  rotateEnabled: false,
-  keepRatio: false,
-  enabledAnchors: ['top-left','top-right','bottom-left','bottom-right'],
-  anchorStroke: 'black',
-  anchorFill: 'white',
-  anchorSize: 8
-});
-
-annotationLayer.add(transformer);
-
+// Utils
 function hexToRgba(hex, alpha = 0.25) {
-  hex = hex.replace('#', '');
-
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function createAnnotationRect(bbox, label) {
-  const [x1, y1, x2, y2] = bbox.split(' ').map(Number);
+    const [x1, y1, x2, y2] = bbox.split(' ').map(Number);
 
-  const absX1 = konvaImage.x() + x1 * konvaImage.width();
-  const absY1 = konvaImage.y() + y1 * konvaImage.height();
-  const absX2 = konvaImage.x() + x2 * konvaImage.width();
-  const absY2 = konvaImage.y() + y2 * konvaImage.height();
+    const rect = new Konva.Rect({
+        x: konvaImage.x() + x1 * konvaImage.width(),
+        y: konvaImage.y() + y1 * konvaImage.height(),
+        width: (x2 - x1) * konvaImage.width(),
+        height: (y2 - y1) * konvaImage.height(),
+        fill: hexToRgba(label.color),
+        stroke: label.color,
+        strokeWidth: 2,
+        draggable: false
+    });
 
-  const rect = new Konva.Rect({
-    x: absX1,
-    y: absY1,
-    width: absX2 - absX1,
-    height: absY2 - absY1,
-    fill: hexToRgba(label.color, 0.25),
-    stroke: label.color,
-    strokeWidth: 2,
-    strokeScaleEnabled: true
-  });
+    // ✅ ДВОЙНОЙ КЛИК ТОЛЬКО В EDIT
+    rect.on('dblclick dbltap', () => {
+        if (selectedTool !== 'edit') return;
 
-  transformer.nodes([rect]);
-  annotationLayer.draw();
+        rect.moveToBottom();
+        annotationLayer.batchDraw();
 
-  return rect
+        if (activeRect === rect) {
+            transformer.nodes([]);
+            rect.draggable(false);
+            activeRect = null;
+            transformerLayer.draw();
+        }
+    });
+
+    return rect;
 }
 
-function drawAnnotations(annotationData, annotationLayer) {
-  for (const item of annotationData) {
-    if (item.DELETE) continue;
+function drawAnnotations(data) {
+    data.forEach(item => {
+        if (item.DELETE) return;
 
-    const label = getLabel(item.label);
+        const rect = createAnnotationRect(item.bbox, getLabel(item.label));
+        annotationLayer.add(rect);
+        item._rect = rect;
+    });
 
-    const rect = createAnnotationRect(item.bbox, label);
-    annotationLayer.add(rect);
-
-    item._rect = rect;
-  }
-
-  annotationLayer.draw();
+    annotationLayer.draw();
 }
 
-function normalizeCoordinate(value) {
-  let v = Math.max(0, Math.min(1, value));
-  return Math.round(v * 100) / 100;
+// SELECT RECT
+annotationLayer.on('click tap', (e) => {
+    if (selectedTool !== 'edit') return;
+    if (!(e.target instanceof Konva.Rect)) return;
+
+    if (activeRect) activeRect.draggable(false);
+
+    activeRect = e.target;
+    activeRect.draggable(true);
+
+    transformer.nodes([activeRect]);
+    transformerLayer.draw();
+});
+
+// CLICK OUTSIDE
+stage.on('click tap', (e) => {
+    if (selectedTool !== 'edit') return;
+
+    if (!(e.target instanceof Konva.Rect)) {
+        transformer.nodes([]);
+
+        if (activeRect) activeRect.draggable(false);
+
+        activeRect = null;
+        transformerLayer.draw();
+    }
+});
+
+// Drawing helpers
+function normalizeCoordinate(v) {
+    return Math.round(Math.max(0, Math.min(1, v)) * 100) / 100;
 }
 
 function getPointerRelativeToStage() {
-  const pointer = stage.getPointerPosition();
-  const scale = stage.scaleX();
-  return {
-    x: (pointer.x - stage.x()) / scale,
-    y: (pointer.y - stage.y()) / scale
-  };
+    const p = stage.getPointerPosition();
+    const s = stage.scaleX();
+    return {
+        x: (p.x - stage.x()) / s,
+        y: (p.y - stage.y()) / s
+    };
 }
 
+// Drawing
 let isDrawing = false;
 let newRect = null;
-let startX = 0;
-let startY = 0;
+let startX, startY;
 
-stage.on('mousedown touchstart', (e) => {
-  if (e.evt.button !== 0) return;
-  if (selectedTool !== 'create') return;
-  console.log('Начали рисовать по изображению!');
+stage.on('mousedown', (e) => {
+    if (selectedTool !== 'create' || e.evt.button !== 0) return;
 
-  isDrawing = true;
-  const pos = getPointerRelativeToStage();
-  startX = pos.x;
-  startY = pos.y;
+    isDrawing = true;
 
-  const label = getLabel(selectedLabel)
+    const pos = getPointerRelativeToStage();
+    startX = pos.x;
+    startY = pos.y;
 
-  newRect = new Konva.Rect({
-    x: startX,
-    y: startY,
-    width: 0,
-    height: 0,
-    stroke: label.color,
-    strokeWidth: 2,
-    dash: [4, 2],
-    strokeScaleEnabled: true
-  });
+    const label = getLabel(selectedLabel);
 
-  annotationLayer.add(newRect);
+    newRect = new Konva.Rect({
+        x: startX,
+        y: startY,
+        width: 0,
+        height: 0,
+        stroke: label.color,
+        dash: [4,2]
+    });
+
+    annotationLayer.add(newRect);
 });
 
-stage.on('mousemove touchmove', (e) => {
-  if (selectedTool !== 'create') return;
-  if (e.evt.button !== 0) return;
-  if (!isDrawing || !newRect) return;
+stage.on('mousemove', () => {
+    if (!isDrawing || !newRect) return;
 
+    const pos = getPointerRelativeToStage();
 
-  const pos = getPointerRelativeToStage();;
-  newRect.width(pos.x - startX);
-  newRect.height(pos.y - startY);
+    newRect.width(pos.x - startX);
+    newRect.height(pos.y - startY);
 
-  annotationLayer.batchDraw();
+    annotationLayer.batchDraw();
 });
 
-stage.on('mouseup touchend', (e) => {
-  if (selectedTool !== 'create') return;
-  if (e.evt.button !== 0) return;
-  if (!isDrawing) return;
+stage.on('mouseup', () => {
+    if (!isDrawing) return;
 
-  isDrawing = false;
+    isDrawing = false;
 
-  const relX1 = normalizeCoordinate((newRect.x() - konvaImage.x()) / konvaImage.width());
-  const relY1 = normalizeCoordinate((newRect.y() - konvaImage.y()) / konvaImage.height());
-  const relX2 = normalizeCoordinate((newRect.x() + newRect.width() - konvaImage.x()) / konvaImage.width());
-  const relY2 = normalizeCoordinate((newRect.y() + newRect.height() - konvaImage.y()) / konvaImage.height());
+    const bbox = [
+        normalizeCoordinate((newRect.x() - konvaImage.x()) / konvaImage.width()),
+        normalizeCoordinate((newRect.y() - konvaImage.y()) / konvaImage.height()),
+        normalizeCoordinate((newRect.x() + newRect.width() - konvaImage.x()) / konvaImage.width()),
+        normalizeCoordinate((newRect.y() + newRect.height() - konvaImage.y()) / konvaImage.height())
+    ].join(' ');
 
-  const bbox = `${relX1} ${relY1} ${relX2} ${relY2}`;
-  const label = getLabel(selectedLabel)
+    const label = getLabel(selectedLabel);
+    const rect = createAnnotationRect(bbox, label);
 
-  const rect = createAnnotationRect(bbox, label)
+    annotationLayer.add(rect);
+    newRect.destroy();
 
-  annotationLayer.add(rect);
-  newRect.destroy();
-  annotationLayer.draw();
+    annotationData.push({
+        label: label.id,
+        bbox,
+        DELETE: false,
+        _rect: rect
+    });
 
-  annotationData.push({
-    label: label.id,
-    bbox: bbox,
-    DELETE: false,
-    _rect: rect
-  });
-
-  newRect = null;
-  console.log(annotationData);
+    newRect = null;
+    annotationLayer.draw();
 });
-
