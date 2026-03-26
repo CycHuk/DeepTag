@@ -23,3 +23,7 @@ class MyLoginView(LoginView):
             form = self.get_form()
 
         return render(request, self.template_name, {'form': form})
+
+
+def redirect_404(request, exception):
+    return redirect('projects:index')
