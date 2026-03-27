@@ -23,68 +23,7 @@
                     <span class="icon-[ic--sharp-account-circle] size-10"></span>
                 </button>
 
-                <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-64 p-2" role="menu"
-                    aria-orientation="vertical" aria-labelledby="user-dropdown">
-                    <!-- Информация о пользователе -->
-                    <li class="dropdown-header gap-2 mb-2">
-                        <div class="avatar">
-                            <div class="w-10 rounded-full bg-base-200 flex items-center justify-center">
-                                <span class="icon-[ic--sharp-account-circle] size-8 text-base-content/50"></span>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="text-base-content text-base font-semibold">{{ user.full_name }}</h6>
-                            <small class="text-base-content/50 text-sm font-normal">{{ user.email }}</small>
-                        </div>
-                    </li>
-
-                    <!-- Разделитель -->
-                    <li>
-                        <hr class="dropdown-divider"/>
-                    </li>
-
-                    <!-- Секция выбора темы -->
-                    <li class="dropdown-item px-3 py-2">
-                        <div class="w-full">
-                            <h6 class="text-sm font-semibold text-base-content/70 mb-2">Тема оформления</h6>
-                            <div class="flex flex-col gap-2">
-                                <div>
-                                    <div class="flex items-center justify-between gap-4">
-                                        <label class="label-text text-sm" for="defaultTheme">Default</label>
-                                        <input type="radio" name="theme-radios" class="radio theme-controller"
-                                               id="defaultTheme" value="default" checked/>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex items-center justify-between gap-4">
-                                        <label class="label-text text-sm" for="corporateTheme">Corporate</label>
-                                        <input type="radio" name="theme-radios" class="radio theme-controller"
-                                               id="corporateTheme" value="corporate"/>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex items-center justify-between gap-4">
-                                        <label class="label-text text-sm" for="gourmentTheme">Gourmet</label>
-                                        <input type="radio" name="theme-radios" class="radio theme-controller"
-                                               id="gourmentTheme" value="gourmet"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Разделитель и выход -->
-                    <li>
-                        <hr class="dropdown-divider"/>
-                    </li>
-                    <li>
-                        <form method="post" action="{% url 'auth:logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="dropdown-item text-red-500 font-semibold">
-                                Выйти
-                            </button>
-                        </form>
-                    </li>
-                </ul>
+               {% include "components/user_dropdown_menu.html" %}
             </div>
         </div>
     </div>

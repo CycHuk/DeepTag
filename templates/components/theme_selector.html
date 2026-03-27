@@ -1,0 +1,28 @@
+<div class="flex flex-col w-full">
+    <!-- Заголовок -->
+    <h3 class="text-base text-primary font-semibold p-2">Тема</h3>
+
+    <!-- По умолчанию -->
+    <div class="flex items-center justify-between gap-4 p-2 rounded cursor-pointer transition-colors hover:bg-base-200">
+        <label class="label label-text" for="themeDefault">По умолчанию</label>
+        <input type="radio" name="theme-radios" class="radio radio-primary theme-controller" id="themeDefault" value="default" checked/>
+    </div>
+
+    <!-- Светлая -->
+    <div class="flex items-center justify-between gap-4 p-2 rounded cursor-pointer transition-colors hover:bg-base-200">
+        <label class="label label-text" for="themeLight">Светлая</label>
+        <input type="radio" name="theme-radios" class="radio radio-primary theme-controller" id="themeLight" value="light"/>
+    </div>
+
+    <!-- Темная -->
+    <div class="flex items-center justify-between gap-4 p-2 rounded cursor-pointer transition-colors hover:bg-base-200">
+        <label class="label label-text" for="themeDark">Темная</label>
+        <input type="radio" name="theme-radios" class="radio radio-primary theme-controller" id="themeDark" value="dark"/>
+    </div>
+
+    <!-- Claude -->
+    <div class="flex items-center justify-between gap-4 p-2 rounded cursor-pointer transition-colors hover:bg-base-200">
+        <label class="label label-text" for="themeClaude">Claude</label>
+        <input type="radio" name="theme-radios" class="radio radio-primary theme-controller" id="themeClaude" value="claude"/>
+    </div>
+</div>

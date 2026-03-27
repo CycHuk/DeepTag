@@ -1,0 +1,31 @@
+<ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-64 p-2" role="menu"
+    aria-orientation="vertical" aria-labelledby="user-dropdown">
+
+    <li class="dropdown-header gap-2 mb-2">
+        <div class="avatar">
+            <div class="w-10 rounded-full bg-base-200 flex items-center justify-center">
+                <span class="icon-[ic--sharp-account-circle] size-10 text-base-content/50"></span>
+            </div>
+        </div>
+        <div>
+            <h6 class="text-base-content text-base font-semibold">{{ user.full_name }}</h6>
+            <small class="text-base-content/50 text-sm font-normal">{{ user.email }}</small>
+        </div>
+    </li>
+
+    <li class="" onclick="event.stopPropagation()">
+        {% include 'components/theme_selector.html' %}
+    </li>
+    <li>
+        <hr class="dropdown-divider"/>
+    </li>
+
+    <li>
+        <form method="post" action="{% url 'auth:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="dropdown-item text-red-500 font-semibold">
+                Выйти
+            </button>
+        </form>
+    </li>
+</ul>
