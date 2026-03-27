@@ -1,7 +1,7 @@
 <!-- Левая часть: кнопка завершить -->
 <div class="flex-shrink-0">
     <button class="btn btn-soft btn-success flex items-center gap-2 transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95"
-            hx-post="{% url 'tasks:annotation-save'%}"
+            hx-post="{% url 'tasks:annotation-save' %}"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
             hx-trigger="click">
         <span class="icon-[tabler--check] size-5"></span>
@@ -53,9 +53,26 @@
     {% endif %}
 </nav>
 
-<!-- Правая часть: кнопка настройки -->
-<div class="flex-shrink-0 ml-auto">
-    <button type="button" class="btn btn-outline btn-sm">
-        <span class="icon-[tabler--settings] size-5"></span>
+<div class="lex-shrink-0 ml-auto dropdown relative inline-flex">
+    <button id="settings" type="button" class="dropdown-toggle flex items-center gap-2 transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95" aria-haspopup="menu" aria-expanded="false"
+            aria-label="Dropdown">
+        <span class="size-8 icon-[hugeicons--settings-02] dropdown-open:rotate-90 size-4"></span>
     </button>
+    <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-60" role="menu" aria-orientation="vertical"
+        aria-labelledby="settings">
+        <li class="" onclick="event.stopPropagation()">
+            {% include 'components/theme_selector.html' %}
+        </li>
+        <li>
+            <hr class="dropdown-divider"/>
+        </li>
+        <li class="px-2 py-1" onclick="event.stopPropagation()">
+            <div class="dropdown-item flex items-start gap-3">
+                <input type="checkbox" class="switch switch-primary mt-1" id="toggle-hints" checked />
+                <label for="toggle-hints" class="label-text flex flex-col items-start">
+                    <span class="text-base font-medium">Показывать подсказки</span>
+                </label>
+            </div>
+        </li>
+    </ul>
 </div>

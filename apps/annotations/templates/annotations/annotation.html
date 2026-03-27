@@ -6,12 +6,25 @@
 
     {{ formset_data|json_script:"formset-data" }}
     <input type="hidden" id="image_id" value="{{ image.id }}">
+    <div class="fixed bottom-4 right-4 flex flex-col gap-4">
+        <!-- Блок редактирования аннотации -->
+        <div id="annotation_edit" class="rounded-lg bg-base-200 p-4 shadow-lg flex items-center gap-2 hidden">
+            <label for="edit-label" class="text-content font-medium">Класс:</label>
+            <select id="edit-label" class="select select-primary">
+                <!-- Опции будут подставлены через JS -->
+            </select>
+            <button id="delete-rect" class="btn btn-error">Удалить</button>
+        </div>
 
-    <div id="annotation_edit" class="fixed bottom-4 right-4 rounded-lg bg-base-200 p-4 shadow-lg flex items-center gap-2 hidden flyon-theme-primary">
-        <label for="edit-label" class="text-content font-medium">Класс:</label>
-        <select id="edit-label" class="select select-primary">
-            <!-- Опции будут подставлены через JS -->
-        </select>
-        <button id="delete-rect" class="btn btn-error">Удалить</button>
+        <!-- Блок подсказок -->
+        <div id="hints_block"
+             class="rounded-lg bg-base-200 p-4 shadow-lg flex flex-col gap-2 max-w-xs text-sm">
+            <p class="font-semibold ">Подсказки:</p>
+            <ul class="list-disc list-inside">
+                <li>Нажмите на объект для редактирования.</li>
+                <li>Используйте меню для выбора класса.</li>
+                <li>Кнопка «Удалить» удаляет выделенный объект.</li>
+            </ul>
+        </div>
     </div>
 </div>
