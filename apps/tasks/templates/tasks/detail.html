@@ -26,104 +26,113 @@
             </ul>
         </nav>
 
-        <div class="card w-full bg-base-100 border border-base-200 rounded-2xl shadow-lg transition-all duration-300">
+        <div class="flex flex-col lg:flex-row gap-6 items-stretch">
 
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-base-200 border-b border-base-200 gap-3">
+    <!-- Левая часть (информация о задаче) -->
+    <div class="flex-1 flex">
+        <div class="card w-full bg-base-100 border border-base-200 rounded-2xl shadow-lg flex flex-col h-full">
 
-                <div class="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-                    <span class="badge badge-outline text-lg font-semibold">{{ task.get_type_display }}</span>
-                    <span class="badge text-lg font-semibold
-                {% if task.status == 'completed' %}badge-success
-                {% elif task.status == 'in_progress' %}badge-info
-                {% else %}badge-ghost
+            <!-- Header -->
+            <div class="h-20 flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-base-200 border-b border-base-200 gap-3 rounded-t-2xl">
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <span class="badge badge-outline text-lg font-semibold p-4">
+                        {{ task.get_type_display }}
+                    </span>
+
+                    <span class="badge text-lg font-semibold p-4
+                        {% if task.status == 'completed' %}badge-success
+                        {% elif task.status == 'in_progress' %}badge-info
+                        {% else %}badge-ghost
+                        {% endif %}">
+                        {{ task.get_status_display }}
+                    </span>
+                </div>
+
+                {% if user.is_superuser %}
+                <form method="post" action="{% url 'tasks:delete' task.id %}"
+                      onsubmit="return confirm('Вы уверены, что хотите удалить задачу?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-error btn-sm">Удалить</button>
+                </form>
                 {% endif %}
-            ">
-                {{ task.get_status_display }}
-            </span>
-                </div>
-
-                <!-- Заголовок задачи + кнопка удалить -->
-                <div class="flex items-center gap-3">
-                    <span class="text-sm text-base-content/60 font-medium">Задача № {{ task.id }}</span>
-
-                    {% if user.is_superuser %}
-                        <form method="post" action="{% url 'tasks:delete' task.id %}"
-                              onsubmit="return confirm('Вы уверены, что хотите удалить задачу?');">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-error btn-sm">Удалить</button>
-                        </form>
-                    {% endif %}
-                </div>
-
             </div>
 
-            <div class="p-6 flex flex-col gap-4">
-
+            <!-- Content -->
+            <div class="p-6 flex flex-col gap-4 flex-1">
                 <div class="flex flex-col sm:flex-row justify-between gap-4 text-base-content/70">
-                    <div class="flex items-center gap-2">
-                        👤 Назначен:
+                    <div>👤 Назначен:
                         {% if task.assigned_to %}
                             {{ task.assigned_to.full_name }}
                         {% else %}
                             <span class="badge badge-warning badge-sm">Свободна</span>
                         {% endif %}
                     </div>
-                    <div class="flex items-center gap-2">
-                        📅 Создано: {{ task.created_at|date:"d M Y H:i" }}
-                    </div>
-                    <div class="flex items-center gap-2">
-                        🖼 Изображений: {{ task.images.count }}
-                    </div>
+
+                    <div>📅 {{ task.created_at|date:"d M Y H:i" }}</div>
+                    <div>🖼 {{ task.images.count }}</div>
                 </div>
-
-
             </div>
 
-            <!-- Действия -->
-            <div class="p-6 border-t border-base-200 flex flex-wrap gap-3 justify-center sm:justify-start">
-
+            <!-- Actions -->
+            <div class="p-6 border-t border-base-200 flex flex-wrap gap-3">
                 {% if not task.assigned_to %}
-                    <form action="{% url 'tasks:take' task.id %}" method="post" class="flex-1 sm:flex-auto">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary btn-md w-full">
-                            Взять задачу
-                        </button>
-                    </form>
+                <form action="{% url 'tasks:take' task.id %}" method="post" class="flex-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary w-full">
+                        Взять задачу
+                    </button>
+                </form>
                 {% endif %}
 
-                <a href="{% url 'tasks:annotation' task.id %}" class="btn btn-outline btn-md flex-1 sm:flex-auto w-full">
+                <a href="{% url 'tasks:annotation' task.id %}"
+                   class="btn btn-outline flex-1 w-full">
                     Разметить
                 </a>
 
                 {% if task.assigned_to == user and task.status != 'completed' %}
-                    <form method="post" action="{% url 'tasks:complete' task.id %}" class="flex-1 sm:flex-auto">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-md w-full">
-                            Пометить как выполненную
-                        </button>
-                    </form>
+                <form method="post" action="{% url 'tasks:complete' task.id %}" class="flex-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success w-full">
+                        Завершить
+                    </button>
+                </form>
                 {% endif %}
             </div>
+
         </div>
+    </div>
 
-        <div class="mt-6 p-6 border-t border-base-200 rounded-xl bg-base-100 shadow-sm flex flex-col gap-4">
+    <!-- Правая часть (загрузка фото) -->
+    <div class="w-full lg:w-96 flex">
+        <div class="card w-full bg-base-100 border border-base-200 rounded-2xl shadow-lg flex flex-col h-full">
 
-            <h3 class="text-lg font-semibold">Загрузить фотографии</h3>
-            <p class="text-sm text-base-content/70">Вы можете загрузить одну или несколько фотографий для этой
-                задачи.</p>
+            <!-- Header -->
+            <div class="h-20 p-6 bg-base-200 border-b border-base-200 rounded-t-2xl">
+                <h3 class="text-lg font-semibold">Загрузить фотографии</h3>
+                <p class="text-sm text-base-content/70">
+                    Можно загрузить несколько изображений
+                </p>
+            </div>
 
-            <form action="{% url 'tasks:add_images' task.id %}" method="post" enctype="multipart/form-data"
-                  class="flex flex-col gap-3">
-                {% csrf_token %}
-                <input id="file-upload" type="file" name="images" multiple class="input max-w-sm"
-                       aria-label="file-input" accept="image/*">
-                <button type="submit" class="btn btn-primary btn-md w-full" onclick="handleFormSubmit()">Загрузить
-                </button>
-                <div class="flex justify-end">
-                </div>
-            </form>
+            <!-- Content -->
+            <div class="p-6 flex flex-col gap-4 flex-1">
+                <form action="{% url 'tasks:add_images' task.id %}" method="post"
+                      enctype="multipart/form-data" class="flex flex-col gap-3 h-full justify-between">
+                    {% csrf_token %}
+
+                    <input type="file" name="images" multiple
+                           class="input file-input-bordered w-full" accept="image/*">
+
+                    <button type="submit" class="btn btn-primary w-full" onclick="handleFormSubmit()">
+                        Загрузить
+                    </button>
+                </form>
+            </div>
+
         </div>
+    </div>
 
+</div>
         <div class="mt-6 p-6 border-t border-base-200 rounded-xl bg-base-100 shadow-sm flex flex-col gap-4">
 
             <h3 class="text-lg font-semibold">Фотографии</h3>
