@@ -15,6 +15,36 @@
         <div id="annotation" class="flex-1 overflow-auto max-h-full">
             {% include 'annotations/annotation.html' %}
         </div>
+        <div class="fixed bottom-4 right-4 flex flex-col gap-4 max-w-md">
+            <!-- Блок редактирования аннотации -->
+            <div id="annotation_edit" class="card card-border border-base-300 bg-base-100 shadow-xl rounded-xl p-2 hidden">
+                <div class="card-body p-0 flex flex-col md:flex-row md:items-end gap-2">
+
+                    <!-- Select -->
+                    <div class="flex-1 w-full">
+                        <label for="edit-label" class="label">
+                            <span class="label-text font-semibold">Класс</span>
+                        </label>
+                        <select id="edit-label" class="select select-bordered select-primary w-full">
+                            <option disabled selected value="">Выберите класс</option>
+                            <!-- Options will be populated here -->
+                        </select>
+                    </div>
+
+                    <!-- Delete button -->
+                    <div class="flex justify-end w-full md:w-auto">
+                        <button id="delete-rect" type="button" class="btn btn-error btn-md gap-2">
+                            <i class="icon-[proicons--delete] text-base"></i>
+                            <span>Удалить</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Блок подсказок -->
+            {% include 'annotations/hotkeys_hints.html' %}
+        </div>
     </main>
 </div>
 {{ labels|json_script:"labels-data" }}

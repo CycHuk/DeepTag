@@ -512,6 +512,9 @@ function initHintsToggle() {
 }
 
 document.body.addEventListener('htmx:afterRequest', function(evt) {
+    const select = document.getElementById('edit-label');
+    select.innerHTML = '';
+
     init();
     initHintsToggle();
 
