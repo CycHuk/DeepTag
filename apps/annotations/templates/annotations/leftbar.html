@@ -1,9 +1,9 @@
 <div class="flex flex-col items-center h-full border-r border-base-content/20 gap-2">
     <!-- Инструменты -->
-    <div class="p-2 flex flex-col gap-2 border-b border-base-content/20">
+    <div class="p-2 flex flex-col gap-4 border-b border-base-content/20">
 
         <!-- View -->
-        <div class="tooltip">
+        <div class="tooltip [--placement:right]">
             <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
                 <input type="radio" name="tool" class="hidden peer" value="view" checked/>
                 <span class="icon-[solar--cursor-outline] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
@@ -14,7 +14,7 @@
         </div>
 
         <!-- Create -->
-        <div class="tooltip">
+        <div class="tooltip [--placement:right]">
             <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
                 <input type="radio" name="tool" value="create" class="hidden peer"/>
                 <span class="icon-[proicons--tag-add] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
@@ -25,7 +25,7 @@
         </div>
 
         <!-- Edit -->
-        <div class="tooltip">
+        <div class="tooltip [--placement:right]">
             <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
                 <input type="radio" name="tool" value="edit" class="hidden peer"/>
                 <span class="icon-[lucide--square-pen] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
@@ -39,10 +39,10 @@
 
     <!-- Labels dropdown -->
     <div class="p-2 flex flex-col gap-2">
-        <div class="tooltip">
+        <div class="tooltip [--placement:right]">
             <div class="dropdown relative inline-flex [--offset:5] [--placement:right-start] [--scope:window]">
                 <button type="button" id="dropdown-default" class="dropdown-toggle p-2 rounded-md flex items-center justify-center hover:bg-base-200 group" aria-haspopup="menu" aria-expanded="false">
-                    <span class="icon-[proicons--tag] size-6 text-base-content group-hover:text-primary transition-colors duration-200"></span>
+                    <span class="icon-[proicons--tag] size-6 text-base-content transition-colors duration-200"></span>
                 </button>
 
                 <div class="dropdown-menu dropdown-open:opacity-100 hidden" role="menu">
@@ -60,6 +60,36 @@
 
             <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
                 <span class="tooltip-body">Выбрать класс</span>
+            </span>
+        </div>
+    </div>
+
+        <!-- Zoom controls -->
+    <div class="p-2 flex flex-col gap-4 border-t border-base-content/20">
+        <div class="tooltip [--placement:right]">
+            <button id="zoom-in" class="p-2 rounded-md flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
+                <span class="icon-[tabler--zoom-in] size-6 text-base-content"></span>
+            </button>
+            <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                <span class="tooltip-body">Увеличить</span>
+            </span>
+        </div>
+
+        <div class="tooltip [--placement:right]">
+            <button id="zoom-out" class="p-2 rounded-md flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
+                <span class="icon-[tabler--zoom-out] size-6 text-base-content"></span>
+            </button>
+            <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                <span class="tooltip-body">Уменьшить</span>
+            </span>
+        </div>
+
+        <div class="tooltip [--placement:right]">
+            <button id="reset-center" class="p-2 rounded-md flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
+                <span class="icon-[mage--focus] size-6 text-base-content"></span>
+            </button>
+            <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                <span class="tooltip-body">Вернуться в центр</span>
             </span>
         </div>
     </div>

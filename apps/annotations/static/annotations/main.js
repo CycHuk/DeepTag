@@ -36,6 +36,10 @@ function init() {
     }).observe(container);
 
     // Zoom
+    const zoomInBtn = document.getElementById('zoom-in');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    const resetCenterBtn = document.getElementById('reset-center');
+
     const scaleBy = 1.05;
 
     stage.on('wheel', (e) => {
@@ -61,6 +65,72 @@ function init() {
 
         stage.batchDraw();
     });
+
+    zoomInBtn.addEventListener('click', () => {
+        const oldScale = stage.scaleX();
+        const newScale = oldScale * scaleBy;
+
+        const center = {
+            x: stage.width() / 2,
+            y: stage.height() / 2
+        };
+
+        const mousePointTo = {
+            x: (center.x - stage.x()) / oldScale,
+            y: (center.y - stage.y()) / oldScale
+        };
+
+        stage.scale({ x: newScale, y: newScale });
+        stage.position({
+            x: center.x - mousePointTo.x * newScale,
+            y: center.y - mousePointTo.y * newScale
+        });
+
+        stage.batchDraw();
+    });
+
+    // Zoom Out
+    zoomOutBtn.addEventListener('click', () => {
+        const oldScale = stage.scaleX();
+        const newScale = oldScale / scaleBy;
+
+        const center = {
+            x: stage.width() / 2,
+            y: stage.height() / 2
+        };
+
+        const mousePointTo = {
+            x: (center.x - stage.x()) / oldScale,
+            y: (center.y - stage.y()) / oldScale
+        };
+
+        stage.scale({ x: newScale, y: newScale });
+        stage.position({
+            x: center.x - mousePointTo.x * newScale,
+            y: center.y - mousePointTo.y * newScale
+        });
+
+        stage.batchDraw();
+    });
+
+    // Reset Center
+    resetCenterBtn.addEventListener('click', () => {
+    stage.scale({ x: 1, y: 1 });
+
+    // Центрируем изображение внутри stage
+    const stageWidth = stage.width();
+    const stageHeight = stage.height();
+    const imageWidth = konvaImage.width();
+    const imageHeight = konvaImage.height();
+
+    konvaImage.position({
+        x: (stageWidth - imageWidth) / 2,
+        y: (stageHeight - imageHeight) / 2
+    });
+
+    stage.position({ x: 0, y: 0 }); // stage оставляем без смещения
+    stage.batchDraw();
+});
 
     // Layers
     const imageLayer = new Konva.Layer();
