@@ -20,6 +20,14 @@
         <hr class="dropdown-divider"/>
     </li>
 
+    {% if user.is_superuser %}
+    <li>
+        <a href="{% url 'admin:index' %}" class="dropdown-item">
+            Админка
+        </a>
+    </li>
+    {% endif %}
+
     <li>
         <form method="post" action="{% url 'auth:logout' %}">
             {% csrf_token %}

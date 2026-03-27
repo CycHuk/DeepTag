@@ -84,10 +84,14 @@
                 </form>
                 {% endif %}
 
-                <a href="{% url 'tasks:annotation' task.id %}"
-                   class="btn btn-outline flex-1 w-full">
-                    Разметить
-                </a>
+                {% if task.images.count and task.project.labels.exists %}
+                    {% if task.assigned_to == user and task.status != 'completed' or user.is_superuser %}
+                        <a href="{% url 'tasks:annotation' task.id %}"
+                           class="btn btn-outline flex-1 w-full">
+                            Разметить
+                        </a>
+                    {% endif %}
+                {% endif %}
 
                 {% if task.assigned_to == user and task.status != 'completed' %}
                 <form method="post" action="{% url 'tasks:complete' task.id %}" class="flex-1">
