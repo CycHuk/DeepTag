@@ -46,4 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def full_name(self):
-        return f"{self.last_name} {self.first_name} {self.middle_name or ''}".strip()
+        initials = f"{self.first_name[0]}." if self.first_name else ""
+        if self.middle_name:
+            initials += f" {self.middle_name[0]}."
+        return f"{self.last_name} {initials}".strip()
