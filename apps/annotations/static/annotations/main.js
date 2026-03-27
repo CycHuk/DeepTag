@@ -211,12 +211,10 @@ function init() {
         annotationLayer.draw();
     }
 
-    // Annotation edit elements
     const annotationEdit = document.getElementById('annotation_edit');
     const editLabelSelect = document.getElementById('edit-label');
     const deleteRectBtn = document.getElementById('delete-rect');
 
-    // Заполняем select
     labels.forEach(label => {
         const option = document.createElement('option');
         option.value = label.id;
@@ -224,7 +222,6 @@ function init() {
         editLabelSelect.appendChild(option);
     });
 
-    // SELECT RECT
     annotationLayer.on('click tap', (e) => {
         if (selectedTool !== 'edit') return;
         if (!(e.target instanceof Konva.Rect)) return;
@@ -237,15 +234,12 @@ function init() {
         transformer.nodes([activeRect]);
         transformerLayer.draw();
 
-        // Показ блока редактирования
         annotationEdit.classList.remove('hidden');
 
-        // Подставляем текущий label
         const annItem = annotationData.find(item => item._rect === activeRect);
         if (annItem) editLabelSelect.value = annItem.label;
     });
 
-    // CLICK OUTSIDE
     stage.on('click tap', (e) => {
         if (selectedTool !== 'edit') return;
 
@@ -258,7 +252,6 @@ function init() {
         }
     });
 
-    // Изменение label через select
     editLabelSelect.addEventListener('change', () => {
         if (!activeRect) return;
         const newLabelId = editLabelSelect.value;
@@ -272,7 +265,6 @@ function init() {
         if (annItem) annItem.label = newLabelId;
     });
 
-    // Удаление rect
     deleteRectBtn.addEventListener('click', () => {
         if (!activeRect) return;
         const annItem = annotationData.find(item => item._rect === activeRect);
@@ -367,7 +359,6 @@ function init() {
         annotationLayer.draw();
     });
 
-    // htmx config request
     document.body.addEventListener('htmx:configRequest', function(evt) {
         evt.detail.parameters['annotations-TOTAL_FORMS'] = annotationData.length;
         evt.detail.parameters['annotations-INITIAL_FORMS'] = annotationData.filter(a => a.id !== undefined).length;
@@ -399,7 +390,6 @@ function init() {
     };
 }
 
-// Global event listeners for tool and label changes
 document.addEventListener('change', (e) => {
     if (e.target.name === 'tool') {
         selectedTool = e.target.value;
@@ -414,14 +404,72 @@ document.addEventListener('change', (e) => {
     }
 
     if (e.target.name === 'label') {
-        // This will be picked up by init() on next htmx request
     }
 });
 
-// Initialize on page load
 init();
 
-// Re-initialize after htmx requests
+function initHintsToggle() {
+    const toggle = document.getElementById('toggle-hints');
+    const hintsBlock = document.getElementById('hints_block');
+
+    if (!toggle || !hintsBlock) return;
+
+    const hintsVisible = localStorage.getItem('hintsVisible');
+
+    if (hintsVisible !== null) {
+        if (hintsVisible === 'true') {
+            hintsBlock.classList.remove('hidden');
+            toggle.checked = true;
+        } else {
+            hintsBlock.classList.add('hidden');
+            toggle.checked = false;
+        }
+    } else {
+        const isHidden = hintsBlock.classList.contains('hidden');
+        toggle.checked = !isHidden;
+    }
+
+    toggle.addEventListener('change', () => {
+        const show = toggle.checked;
+        if (show) {
+            hintsBlock.classList.remove('hidden');
+        } else {
+            hintsBlock.classList.add('hidden');
+        }
+        localStorage.setItem('hintsVisible', show);
+    });
+}
+
 document.body.addEventListener('htmx:afterRequest', function(evt) {
     init();
+    initHintsToggle();
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const selectedRadio = document.querySelector(`.theme-controller[value="${savedTheme}"]`);
+        if (selectedRadio) selectedRadio.checked = true;
+    }
+
+    if (window.HSDropdown) {
+        setTimeout(() => {
+            // Close any open dropdowns to reset state
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                const toggle = dropdown.querySelector('.dropdown-toggle');
+                if (toggle) {
+                    // Remove open classes to close dropdowns
+                    dropdown.classList.remove('open');
+                    if (toggle.classList.contains('dropdown-open')) {
+                        toggle.classList.remove('dropdown-open');
+                    }
+                }
+            });
+            
+            // Reinitialize dropdowns
+            HSDropdown.autoInit();
+        }, 100);
+    }
 });
+
+document.addEventListener('DOMContentLoaded', initHintsToggle);
