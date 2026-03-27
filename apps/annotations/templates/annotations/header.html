@@ -14,6 +14,7 @@
     <!-- Previous -->
     {% if page.has_previous %}
         <button
+                id="prevPageBtn"
                 type="button"
                 class="btn btn-text btn-square"
                 hx-post="{% url 'tasks:annotation' task.pk %}?image={{ page.previous_page_number }}"
@@ -38,6 +39,7 @@
     <!-- Next -->
     {% if page.has_next %}
         <button
+                id="nextPageBtn"
                 type="button"
                 class="btn btn-text btn-square"
                 hx-post="{% url 'tasks:annotation' task.pk %}?image={{ page.next_page_number }}"

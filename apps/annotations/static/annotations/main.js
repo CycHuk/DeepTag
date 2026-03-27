@@ -543,3 +543,58 @@ document.body.addEventListener('htmx:afterRequest', function(evt) {
 });
 
 document.addEventListener('DOMContentLoaded', initHintsToggle);
+
+document.addEventListener('keydown', function(e) {
+    const key = e.key.toLowerCase();
+
+    // Навигация страниц
+    if (e.key === "ArrowLeft") {
+        document.getElementById('prevPageBtn').click();
+    }
+
+    if (e.key === "ArrowRight") {
+        const nextBtn = document.getElementById('nextPageBtn');
+        if(nextBtn) nextBtn.click();
+    }
+
+    // Горячие клавиши для инструментов (учёт русской раскладки)
+    const toolMap = {
+        'c': 'create',  // англ.
+        'с': 'create',  // рус.
+        'e': 'edit',
+        'у': 'edit',    // русская 'e'
+        'v': 'view',
+        'м': 'view'     // русская 'v'
+    };
+
+    if (key in toolMap) {
+        const toolValue = toolMap[key];
+        const toolRadio = document.querySelector(`input[name="tool"][value="${toolValue}"]`);
+        if (toolRadio) {
+            toolRadio.checked = true;
+            selectedTool = toolValue;
+
+            // Сброс активного редактирования при смене инструмента
+            if (toolValue !== 'edit') {
+                const transformer = Konva.stages[0] && Konva.stages[0].findOne('Transformer');
+                const annotationEdit = document.getElementById('annotation_edit');
+                if (transformer) transformer.nodes([]);
+                if (annotationEdit) annotationEdit.classList.add('hidden');
+            }
+        }
+    }
+
+    // Сброс центра и масштаба
+    if (key === 'r' || key === 'к') { // русская 'r'
+        const resetCenterBtn = document.getElementById('reset-center');
+        if (resetCenterBtn) resetCenterBtn.click();
+    }
+
+    // Удаление при редактировании
+    if (key === 'delete' && selectedTool === 'edit') {
+        const deleteBtn = document.getElementById('delete-rect');
+        if (deleteBtn) {
+            deleteBtn.click();
+        }
+    }
+});
