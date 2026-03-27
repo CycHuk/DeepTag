@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-from apps.annotations.views import TaskAnnotationView
+from apps.annotations.views import TaskAnnotationView, TaskAnnotationSaveView
 
 app_name = 'tasks'
 
@@ -12,5 +12,6 @@ urlpatterns = [
     path('<uuid:pk>/complete/', views.CompleteTaskView.as_view(), name='complete'),
     path('<uuid:pk>/images/add/', views.TaskAddImageView.as_view(), name='add_images'),
     path('<uuid:pk>/annotation/', TaskAnnotationView.as_view(), name='annotation'),
+    path('annotation/save', TaskAnnotationSaveView.as_view(), name='annotation-save'),
     path('images/<uuid:pk>/delete/', views.ImageDeleteView.as_view(), name='image-delete'),
 ]

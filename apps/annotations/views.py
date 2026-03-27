@@ -1,12 +1,15 @@
 import json
 
 from django.core.paginator import Paginator
-from django.shortcuts import redirect
+from django.http import HttpResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
+from django.views import View
 from django.views.generic import DetailView
 
 from apps.annotations.forms import AnnotationFormSet
 from apps.annotations.models import Annotation
-from apps.tasks.models import Task
+from apps.tasks.models import Task, Image
 
 
 class TaskAnnotationView(DetailView):
@@ -78,3 +81,18 @@ class TaskAnnotationView(DetailView):
 
 
         return self.render_to_response(context)
+
+
+class TaskAnnotationSaveView(View):
+    def post(self, request, *args, **kwargs):
+        image_id = request.POST.get('image_id')
+        image = get_object_or_404(Image, pk=image_id)
+
+        formset = AnnotationFormSet(request.POST, instance=image)
+        if formset.is_valid():
+            formset.save()
+
+        response = HttpResponse()
+        response["HX-Redirect"] = reverse('tasks:detail', kwargs={'pk': image.task.pk})
+        return response
+
