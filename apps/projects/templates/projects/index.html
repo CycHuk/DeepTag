@@ -18,22 +18,18 @@
         </a>
     </div>
 
+    {% if projects %}
     <!-- GRID DASHBOARD -->
-    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3 items-start">
-
+    <div class="flex flex-wrap justify-center gap-6">
         {% for project in projects|slice:":6" %}
-
         <!-- CARD -->
-        <div class="group flex flex-col bg-base-100 border border-base-200 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+        <div class="w-full sm:w-[48%] xl:w-[30%] max-w-sm group flex flex-col bg-base-100 border border-base-200 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
 
             <!-- BODY -->
             <div class="p-6 flex flex-col gap-4 flex-1">
-                <!-- TITLE -->
                 <h2 class="font-semibold text-lg text-base-content group-hover:text-primary transition">
                     {{ project.name }}
                 </h2>
-
-                <!-- DESCRIPTION -->
                 <p class="text-sm text-base-content/70 leading-relaxed line-clamp-1">
                     {{ project.description|default:"Описание отсутствует" }}
                 </p>
@@ -70,18 +66,17 @@
             </div>
 
         </div>
-
         {% endfor %}
-
     </div>
 
     <!-- PAGINATION -->
+    {% if page_obj.paginator.num_pages > 1 %}
     <div class="flex justify-center mt-12">
         <nav class="flex items-center gap-x-1">
 
             {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-text">
-                Previous
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-text btn-square">
+                <span class="icon-[mdi--navigate-before] size-10"></span>
             </a>
             {% endif %}
 
@@ -100,13 +95,20 @@
             </div>
 
             {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-text">
-                Next
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-text btn-square">
+                <span class="icon-[mdi--navigate-next] size-10"></span>
             </a>
             {% endif %}
 
         </nav>
     </div>
+    {% endif %}
+
+    {% else %}
+    <p class="text-center text-base-content/60 italic mt-12">
+        Проекты отсутствуют
+    </p>
+    {% endif %}
 
 </div>
 
