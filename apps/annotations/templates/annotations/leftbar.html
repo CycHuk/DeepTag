@@ -1,36 +1,66 @@
 <div class="flex flex-col items-center h-full border-r border-base-content/20 gap-2">
     <!-- Инструменты -->
     <div class="p-2 flex flex-col gap-2 border-b border-base-content/20">
-        <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
-            <input type="radio" name="tool" class="hidden peer" value="view" checked/>
-            <span class="icon-[solar--cursor-outline] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
-        </label>
 
-        <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
-            <input type="radio" name="tool" value="create" class="hidden peer"/>
-            <span class="icon-[proicons--tag-add] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
-        </label>
+        <!-- View -->
+        <div class="tooltip">
+            <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
+                <input type="radio" name="tool" class="hidden peer" value="view" checked/>
+                <span class="icon-[solar--cursor-outline] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
+            </label>
+            <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                <span class="tooltip-body">Просмотр</span>
+            </span>
+        </div>
 
-        <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
-            <input type="radio" name="tool" value="edit" class="hidden peer"/>
-            <span class="icon-[lucide--square-pen] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
-        </label>
+        <!-- Create -->
+        <div class="tooltip">
+            <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
+                <input type="radio" name="tool" value="create" class="hidden peer"/>
+                <span class="icon-[proicons--tag-add] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
+            </label>
+            <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                <span class="tooltip-body">Создать аннотацию</span>
+            </span>
+        </div>
+
+        <!-- Edit -->
+        <div class="tooltip">
+            <label class="cursor-pointer rounded-md p-2 flex items-center justify-center hover:bg-base-200 transition-colors duration-200">
+                <input type="radio" name="tool" value="edit" class="hidden peer"/>
+                <span class="icon-[lucide--square-pen] size-6 text-base-content peer-checked:text-primary-content peer-checked:bg-primary transition-colors duration-200"></span>
+            </label>
+            <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                <span class="tooltip-body">Редактировать</span>
+            </span>
+        </div>
+
     </div>
 
+    <!-- Labels dropdown -->
     <div class="p-2 flex flex-col gap-2">
-        <div class="dropdown relative inline-flex [--offset:5] [--placement:right-start] [--scope:window]">
-            <button type="button" id="dropdown-default" class="dropdown-toggle p-2 rounded-md flex items-center justify-center hover:bg-base-200 group" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                <span class="icon-[proicons--tag] size-6 text-base-content group-hover:text-primary transition-colors duration-200"></span>
-            </button>
-            <div class="dropdown-menu dropdown-open:opacity-100 hidden" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-transportation">
-                {% for label in labels %}
-                    <div class="dropdown-item gap-4 items-center flex justify-between">
-                        <input id="dropdown-radio-{{ label.id }}" name="label" value="{{ label.id }}" type="radio" class="radio radio-primary" {% if forloop.first %}checked{% endif %}/>
-                        <label for="dropdown-radio-{{ label.id }}" class="label-text text-base-content block text-sm font-semibold">{{ label.name }}</label>
-                        <span class="w-4 h-4 rounded-full" style="background-color: {{ label.color }};"></span>
-                    </div>
-                {% endfor %}
+        <div class="tooltip">
+            <div class="dropdown relative inline-flex [--offset:5] [--placement:right-start] [--scope:window]">
+                <button type="button" id="dropdown-default" class="dropdown-toggle p-2 rounded-md flex items-center justify-center hover:bg-base-200 group" aria-haspopup="menu" aria-expanded="false">
+                    <span class="icon-[proicons--tag] size-6 text-base-content group-hover:text-primary transition-colors duration-200"></span>
+                </button>
+
+                <div class="dropdown-menu dropdown-open:opacity-100 hidden" role="menu">
+                    {% for label in labels %}
+                        <div class="dropdown-item gap-4 items-center flex justify-between">
+                            <input id="dropdown-radio-{{ label.id }}" name="label" value="{{ label.id }}" type="radio" class="radio radio-primary" {% if forloop.first %}checked{% endif %}/>
+                            <label for="dropdown-radio-{{ label.id }}" class="label-text text-base-content block text-sm font-semibold">
+                                {{ label.name }}
+                            </label>
+                            <span class="w-4 h-4 rounded-full" style="background-color: {{ label.color }};"></span>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
+
+            <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                <span class="tooltip-body">Выбрать класс</span>
+            </span>
         </div>
     </div>
 </div>
