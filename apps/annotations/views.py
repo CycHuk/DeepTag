@@ -23,6 +23,22 @@ class TaskAnnotationView(DetailView):
             return ['annotations/update.html']
         return ['annotations/main.html']
 
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        images = self.object.images.exists()
+        labels = self.object.project.labels.exists()
+
+        if not images or not labels:
+            if self.request.headers.get('HX-Request'):
+                response = HttpResponse()
+                response["HX-Redirect"] = reverse('tasks:detail', kwargs={'pk': self.kwargs['pk']})
+                return response
+            else:
+                return redirect('tasks:detail', pk=self.kwargs['pk'])
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -31,9 +47,6 @@ class TaskAnnotationView(DetailView):
 
         page_number = self.request.GET.get('image', 1)
         page = paginator.get_page(page_number)
-
-        if not page.object_list:
-            return redirect('tasks:detail', pk=self.kwargs['pk'])
 
         image = page.object_list[0]
 
