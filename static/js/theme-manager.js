@@ -15,7 +15,6 @@ function restoreTheme() {
 
 // Apply theme on initial load
 restoreTheme();
-
 // Add event listener for theme changes
 document.addEventListener('change', (e) => {
     if (e.target.classList.contains('theme-controller') && e.target.checked) {
@@ -24,7 +23,6 @@ document.addEventListener('change', (e) => {
         localStorage.setItem('theme', theme);
     }
 });
-
 // Re-apply theme after htmx requests
 if (typeof htmx !== 'undefined') {
     document.body.addEventListener('htmx:afterRequest', function(evt) {
