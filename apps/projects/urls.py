@@ -11,5 +11,6 @@ urlpatterns = [
     path('<uuid:pk>/delete/', views.ProjectDeleteView.as_view(), name='delete'),
     path('<uuid:pk>/edit/', views.ProjectEditView.as_view(), name='edit'),
     path('<uuid:pk>/task/create', TaskCreateView.as_view(), name='create_task'),
+    path('<uuid:pk>/export/create', views.ExportCreateView.as_view(), name='create_export'),
     path("", views.ProjectListView.as_view(), name="index")
 ]

@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, ListView, DetailView, DeleteView, UpdateView
 
 from .forms import ProjectCreateForm, LabelsFormSet
@@ -158,3 +159,10 @@ class ProjectEditView(UpdateView):
             return redirect('projects:detail', pk=self.object.pk)
 
         return self.form_invalid(form)
+
+class ExportCreateView(View):
+    def post(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+
+        return redirect("projects:detail", pk=project.id)
+

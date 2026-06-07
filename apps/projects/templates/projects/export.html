@@ -1,9 +1,13 @@
 <div class="flex items-center justify-between mb-4">
         <h2 class="font-semibold text-xl">Экспорт проекта</h2>
 
-        <button class="btn btn-primary btn-sm">
-            Создать экспорт
-        </button>
+        <form method="post" action="{% url 'projects:create_export' project.id %}">
+            {% csrf_token %}
+
+            <button type="submit" class="btn btn-primary btn-sm">
+                Создать экспорт
+            </button>
+        </form>
     </div>
 
     <!-- Таблица экспортов -->
