@@ -1,13 +1,18 @@
+from collections import defaultdict
+
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.paginator import Paginator
+from django.db.models import F, Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, ListView, DetailView, DeleteView, UpdateView
 
+from tasks.export import export
 from .forms import ProjectCreateForm, LabelsFormSet
-from .models import Project
-from ..tasks.models import Task
+from .models import Project, Export
+from ..annotations.models import Annotation
+from ..tasks.models import Task, Image
 
 
 class ProjectListView(ListView):
@@ -163,6 +168,12 @@ class ProjectEditView(UpdateView):
 class ExportCreateView(View):
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
+
+        export_id = project.exports.create(
+            status=Export.Status.IN_PROGRESS,
+        ).id
+
+        export.delay(project.id, export_id)
 
         return redirect("projects:detail", pk=project.id)
 
