@@ -1,32 +1,79 @@
 <div class="flex items-center justify-between mb-4">
-        <h2 class="font-semibold text-xl">Экспорт проекта</h2>
+    <h2 class="font-semibold text-xl">Экспорт проекта</h2>
 
-        <form method="post" action="{% url 'projects:create_export' project.id %}">
-            {% csrf_token %}
+    <form method="post" action="{% url 'projects:create_export' project.id %}">
+        {% csrf_token %}
 
-            <button type="submit" class="btn btn-primary btn-sm">
-                Создать экспорт
-            </button>
-        </form>
-    </div>
+        <button type="submit" class="btn btn-primary btn-sm">
+            Создать экспорт
+        </button>
+    </form>
+</div>
 
-    <!-- Таблица экспортов -->
-    <div class="flex-1 overflow-x-auto">
-        <table class="table w-full">
-            <thead>
+<!-- Таблица экспортов -->
+<div class="max-h-62 flex-1 overflow-x-auto">
+    <table class=" table">
+        <thead class="">
+            <tr>
+                <th>ID</th>
+                <th>Дата создания</th>
+                <th>Статус</th>
+                <th>Файл</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for export in project.exports.all %}
                 <tr>
-                    <th>ID</th>
-                    <th>Дата создания</th>
-                    <th>Статус</th>
-                    <th>Файл</th>
+
+                    <!-- ID -->
+                    <td class="font-mono text-xs">
+                        {{ forloop.counter }}
+                    </td>
+
+                    <!-- DATE -->
+                    <td>
+                        {{ export.created_at|date:"d.m.Y H:i" }}
+                    </td>
+
+                    <!-- STATUS -->
+                    <td>
+                        {% if export.status == "completed" %}
+                            <span class="badge badge-success">
+                                Готов
+                            </span>
+                        {% elif export.status == "in_progress" %}
+                            <span class="badge badge-warning">
+                                В процессе
+                            </span>
+                        {% else %}
+                            <span class="badge badge-ghost">
+                                {{ export.status }}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- FILE -->
+                    <td>
+                        {% if export.file %}
+                            <a href="{{ export.file.url }}" class="btn btn-xs btn-outline btn-primary" download>
+                                Скачать
+                            </a>
+                        {% else %}
+                            <span class="text-base-content/40">
+                                —
+                            </span>
+                        {% endif %}
+                    </td>
+
                 </tr>
-            </thead>
-            <tbody>
+            {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center text-base-content/50 py-6">
+                    <td colspan="4" class="text-center text-base-content/50 py-6">
                         Экспортов пока нет
                     </td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
