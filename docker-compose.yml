@@ -1,14 +1,53 @@
+version: '3.9'
+
 services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_deeptag:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:80"
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_deeptag:/data
+
   web:
     build: .
+    container_name: deeptag
+    restart: always
+    command: poetry run gunicorn --workers ${WORKERS:-1} --bind 0.0.0.0:${PORT:-8000} config.wsgi:application
     ports:
       - "${PORT}:${PORT}"
     environment:
-      PORT: ${PORT}
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG}
-      WORKERS: ${WORKERS}
+
+      PORT: ${PORT}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      WORKERS: ${WORKERS}
+
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
@@ -16,3 +55,50 @@ services:
       AWS_S3_SIGNATURE_VERSION: ${AWS_S3_SIGNATURE_VERSION}
       AWS_S3_ADDRESSING_STYLE: ${AWS_S3_ADDRESSING_STYLE}
       AWS_QUERYSTRING_AUTH: ${AWS_QUERYSTRING_AUTH}
+
+      CELERY_BROKER_URL: redis://redis:6379/0
+
+      DB_NAME: ${DB_NAME}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: mysql
+      DB_PORT: 3306
+    depends_on:
+      - redis
+      - mysql
+
+  celery:
+    build: .
+    container_name: celery
+    restart: always
+    command: poetry run celery -A tasks.app worker --loglevel=info --pool=solo
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+
+      PORT: ${PORT}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      WORKERS: ${WORKERS}
+
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
+      AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
+      AWS_S3_SIGNATURE_VERSION: ${AWS_S3_SIGNATURE_VERSION}
+      AWS_S3_ADDRESSING_STYLE: ${AWS_S3_ADDRESSING_STYLE}
+      AWS_QUERYSTRING_AUTH: ${AWS_QUERYSTRING_AUTH}
+
+      CELERY_BROKER_URL: redis://redis:6379/0
+
+      DB_NAME: ${DB_NAME}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: mysql
+      DB_PORT: 3306
+    depends_on:
+      - redis
+      - mysql
+
+volumes:
+  mysql_deeptag:
+  redis_deeptag:

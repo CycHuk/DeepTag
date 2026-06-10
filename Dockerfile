@@ -17,6 +17,12 @@ RUN npm run build
 # ========================
 FROM python:3.13-slim
 
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    default-libmysqlclient-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 RUN pip install "poetry>=1.9.0"
@@ -33,6 +39,5 @@ ENV DJANGO_SETTINGS_MODULE=config.settings
 ENV PYTHONUNBUFFERED=1
 
 RUN poetry run python manage.py collectstatic --noinput
-RUN poetry run python manage.py migrate
 
 CMD sh -c "poetry run gunicorn --workers ${WORKERS:-1} --bind 0.0.0.0:${PORT:-8000} config.wsgi:application"
