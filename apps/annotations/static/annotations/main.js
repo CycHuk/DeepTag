@@ -8,7 +8,14 @@ function init() {
 
     // Labels
     labels = JSON.parse(document.getElementById('labels-data').textContent);
-    const selectedLabel = document.querySelector('input[name="label"]:checked').value;
+    let selectedLabel = document.querySelector('input[name="label"]:checked').value;
+
+    document.querySelectorAll('input[name="label"]').forEach((input) => {
+          input.addEventListener('change', (e) => {
+            selectedLabel = e.target.value;
+            console.log(selectedLabel);
+          });
+        });
 
     function getLabel(id) {
         return labels.find(label => label.id === id);
