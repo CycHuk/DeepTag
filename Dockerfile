@@ -6,8 +6,8 @@ FROM node:20-bullseye AS frontend-build
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm install
+
 COPY . .
 RUN npm run build
 
@@ -27,13 +27,14 @@ WORKDIR /app
 
 RUN pip install "poetry>=1.9.0"
 
-COPY pyproject.toml poetry.lock /app/
+COPY pyproject.toml poetry.lock ./
 
 RUN poetry install --only main --no-root
 
+COPY . .
 
-COPY . /app/
-
+# Копируем результат npm run build
+COPY --from=frontend-build /app/static/styles.css /app/static/styles.css
 
 ENV DJANGO_SETTINGS_MODULE=config.settings
 ENV PYTHONUNBUFFERED=1

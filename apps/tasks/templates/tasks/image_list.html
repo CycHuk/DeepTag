@@ -2,7 +2,7 @@
     {% for img in page_obj %}
     <div class="relative group flex-[0_0_200px]">
         <!-- Картинка -->
-        <img src="{{ img.file.url }}" class="w-full rounded-lg shadow">
+        <img src="{{ img.get_url_s3 }}" class="w-full rounded-lg shadow">
 
         <!-- Кнопка удаления поверх картинки -->
         <form

@@ -4,7 +4,7 @@ import uuid
 from apps.accounts.models import User
 from apps.projects.models import Project
 from apps.tasks.utils import process_image
-
+from django.conf import settings
 
 class Task(models.Model):
     class Type(models.TextChoices):
@@ -61,3 +61,16 @@ class Image(models.Model):
         self.file.save(processed_file.name, processed_file, save=False)
 
         super().save(update_fields=['file', 'updated_at'])
+
+    def get_url_s3(self):
+        url = self.file.url
+
+        endpoint = (settings.AWS_S3_ENDPOINT_URL or "").rstrip("/")
+        custom_endpoint = (
+            settings.AWS_S3_ENDPOINT_URL_CUSTOM or endpoint
+        ).rstrip("/")
+
+        if endpoint and custom_endpoint:
+            url = url.replace(endpoint, custom_endpoint, 1)
+
+        return url

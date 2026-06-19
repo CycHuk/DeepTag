@@ -1,5 +1,5 @@
 <div class="flex h-full">
-    <img id="image" src="{{ image.file.url }}" class="hidden" alt="{{ image.id }}">
+    <img id="image" src="{{ image.get_url_s3 }}" class="hidden" alt="{{ image.id }}">
 
     <div id="container" class="flex-1 flex items-center justify-center min-w-0">
     </div>

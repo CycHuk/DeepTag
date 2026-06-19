@@ -56,7 +56,7 @@
                     <!-- FILE -->
                     <td>
                         {% if export.file %}
-                            <a href="{{ export.file.url }}" class="btn btn-xs btn-outline btn-primary" download>
+                            <a href="{{ export.get_url_s3 }}" class="btn btn-xs btn-outline btn-primary" download>
                                 Скачать
                             </a>
                         {% else %}

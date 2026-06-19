@@ -1,6 +1,6 @@
 from django.db import models
 import uuid
-
+from django.conf import settings
 
 class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -30,3 +30,20 @@ class Export(models.Model):
 
     class Meta:
         db_table = "exports"
+
+    def get_url_s3(self):
+        if not self.file:
+            return None
+
+        url = self.file.url
+
+        endpoint = (settings.AWS_S3_ENDPOINT_URL or "").rstrip("/")
+        custom_endpoint = (
+            getattr(settings, "AWS_S3_ENDPOINT_URL_CUSTOM", None)
+            or endpoint
+        ).rstrip("/")
+
+        if endpoint and custom_endpoint:
+            url = url.replace(endpoint, custom_endpoint, 1)
+
+        return url
